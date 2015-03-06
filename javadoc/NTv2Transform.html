@@ -1,0 +1,313 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>NTv2Transform &mdash; Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="top" title="Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation" href="../index.html" />
+    <link rel="up" title="Desenvolupament a GeoTools" href="../geotools.html" />
+    <link rel="next" title="NTv2Transform.Provider" href="NTv2Transform.Provider.html" />
+    <link rel="prev" title="SimilarityTransformProvider" href="SimilarityTransformProvider.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navegació</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="NTv2Transform.Provider.html" title="NTv2Transform.Provider"
+             accesskey="N">següent</a></li>
+        <li class="right" >
+          <a href="SimilarityTransformProvider.html" title="SimilarityTransformProvider"
+             accesskey="P">anterior</a> |</li>
+        <li><a href="../index.html">Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</a> &raquo;</li>
+          <li><a href="../geotools.html" accesskey="U">Desenvolupament a GeoTools</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="ntv2transform">
+<h1>NTv2Transform<a class="headerlink" href="#ntv2transform" title="Link permanent a aquest títol">¶</a></h1>
+<div class="highlight-java"><div class="highlight"><pre><span class="kn">package</span> <span class="n">org</span><span class="o">.</span><span class="na">geotools</span><span class="o">.</span><span class="na">referencing</span><span class="o">.</span><span class="na">operation</span><span class="o">.</span><span class="na">transform</span>
+</pre></div>
+</div>
+<p>Herència:</p>
+<div class="highlight-python"><pre>Object
+  Formattable
+      AbstractMathTransform
+          NTv2Transform</pre>
+</div>
+<p>Signatura:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NTv2Transform</span> <span class="kd">extends</span> <span class="n">AbstractMathTransform</span>
+    <span class="kd">implements</span> <span class="n">MathTransform2D</span><span class="o">,</span> <span class="n">Serializable</span>
+</pre></div>
+</div>
+<p>Descripció:</p>
+<p>Implementació del mètode de transformació de coordenades &#8220;NTv2&#8221; (EPSG:9615).</p>
+<p>Aquesta transformació depèn d&#8217;un recurs extern (el fitxer de malla NTv2). Si el
+fitxer no està disponible, es llençarà una excepció recuperable <tt class="docutils literal"><span class="pre">NoSuchIdentifierException</span></tt>
+en el moment de la instanciació.</p>
+<p>Autor:</p>
+<p>Oscar Fonts</p>
+<p>Vegeu també:</p>
+<p><em>Exception Handling</em> a <a class="reference external" href="http://docs.geotools.org/latest/javadocs/org/geotools/referencing/factory/IdentifiedObjectSet.html">IdentifiedObjectSet</a>,</p>
+<div class="section" id="atributs">
+<h2>Atributs<a class="headerlink" href="#atributs" title="Link permanent a aquest títol">¶</a></h2>
+<div class="section" id="logger">
+<h3>LOGGER<a class="headerlink" href="#logger" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">protected</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Logger</span> <span class="n">LOGGER</span>
+</pre></div>
+</div>
+<p>Logger</p>
+</div>
+</div>
+<div class="section" id="constructor">
+<h2>Constructor<a class="headerlink" href="#constructor" title="Link permanent a aquest títol">¶</a></h2>
+<div class="section" id="id1">
+<h3>NTv2Transform<a class="headerlink" href="#id1" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><pre>public NTv2Transform(URI file) throws NoSuchIdentifierException</pre>
+</div>
+<p>Construeix una <tt class="docutils literal"><span class="pre">NTv2Transform</span></tt> a partir del fitxer de malla indicat.
+Aquest constructor verifica que el recurs sigui localitzable i la seva integritat,
+però no carrega la malla completa en memòria per estalviar recursos.</p>
+<p>Paràmetres:</p>
+<p><tt class="docutils literal"><span class="pre">file</span></tt> - NTv2 grid file name</p>
+<p>Llença:</p>
+<p><tt class="docutils literal"><span class="pre">NoSuchIdentifierException</span></tt> - if the grid is not available.</p>
+</div>
+</div>
+<div class="section" id="metodes">
+<h2>Mètodes<a class="headerlink" href="#metodes" title="Link permanent a aquest títol">¶</a></h2>
+<div class="section" id="hashcode">
+<h3>hashCode<a class="headerlink" href="#hashcode" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kt">int</span> <span class="nf">hashCode</span><span class="o">()</span>
+</pre></div>
+</div>
+<p>Retorna un <em>hash</em> per a aquesta transformació, diferent entre instàncies que no
+siguin equivalents.</p>
+<p>Sobreescriu:</p>
+<p><tt class="docutils literal"><span class="pre">hashCode</span></tt> a la classe <tt class="docutils literal"><span class="pre">AbstractMathTransform</span></tt></p>
+</div>
+<div class="section" id="equals">
+<h3>equals<a class="headerlink" href="#equals" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><pre>public boolean equals(Object object)</pre>
+</div>
+<p>Compara l&#8217;objecte passat com a paràmentre amb aquest, i en determina l&#8217;equivalència.
+<tt class="docutils literal"><span class="pre">object</span></tt> es considerarà equivalent si:</p>
+<ul class="simple">
+<li>És aquesta mateixa instància (<cite>object`</cite> és <tt class="docutils literal"><span class="pre">this</span></tt>).</li>
+<li>Si és una instància de <tt class="docutils literal"><span class="pre">NTv2Transform</span></tt> i els seus paràmetres tenen el mateix
+valor (en aquest cas, el mateix fitxer de malla).</li>
+</ul>
+<p>Sobreescriu:</p>
+<p><tt class="docutils literal"><span class="pre">equals</span></tt> a la classe <tt class="docutils literal"><span class="pre">AbstractMathTransform</span></tt></p>
+<p>Paràmetres:</p>
+<p><tt class="docutils literal"><span class="pre">object</span></tt> - The object to compare with this transform.</p>
+<p>Retorna:</p>
+<p><tt class="docutils literal"><span class="pre">true</span></tt> si l&#8217;objecte donat és <tt class="docutils literal"><span class="pre">this</span></tt>, o una <tt class="docutils literal"><span class="pre">NTv2Transform</span></tt> amb els
+mateixos valors de paràmetres. Implica que, donada una mateixa coordenada
+d&#8217;entrada en ambdós objectes, les corresponents coordenades transformades també
+serien idèntiques.</p>
+</div>
+<div class="section" id="inverse">
+<h3>inverse<a class="headerlink" href="#inverse" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="n">MathTransform2D</span> <span class="nf">inverse</span><span class="o">()</span>
+</pre></div>
+</div>
+<p>Retorna la inversa d&#8217;aquesta trasformació.</p>
+<p>Especificat a:</p>
+<p><tt class="docutils literal"><span class="pre">inverse</span></tt> a la interfície <tt class="docutils literal"><span class="pre">MathTransform</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">inverse</span></tt> a la interfície <tt class="docutils literal"><span class="pre">MathTransform2D</span></tt></p>
+<p>Sobreescriu:</p>
+<p><tt class="docutils literal"><span class="pre">inverse</span></tt> a la classe <tt class="docutils literal"><span class="pre">AbstractMathTransform</span></tt></p>
+<p>Retorna:</p>
+<p>La inversa d&#8217;aquesta transformació.</p>
+</div>
+<div class="section" id="transform">
+<h3>transform<a class="headerlink" href="#transform" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><pre>public void transform(double[] srcPts,
+                      int srcOff,
+                      double[] dstPts,
+                      int dstOff,
+                      int numPts)
+               throws TransformException</pre>
+</div>
+<p>Transforma una llista de coordenades puntuals. Aquest mètode es proporciona
+per transformar eficientment una col·lecció de punts.</p>
+<p>El vector d&#8217;entrada proporcionat conté una serialització de les coordenades.
+Per exemple, si les dimensions de les coordenades d&#8217;entrada són 2, els valors
+apareixeran en aquest ordre:</p>
+<p>(x<sub>0</sub>,y<sub>0</sub>, x<sub>1</sub>,y<sub>1</sub>...).</p>
+<p>Especificat a:</p>
+<p><tt class="docutils literal"><span class="pre">transform</span></tt> a la interfície <tt class="docutils literal"><span class="pre">MathTransform</span></tt></p>
+<p>Paràmetres:</p>
+<p><tt class="docutils literal"><span class="pre">srcPts</span></tt> - el vector que conté les coordenades d&#8217;entrada.</p>
+<p><tt class="docutils literal"><span class="pre">srcOff</span></tt> - la posició del primer punt a transformar dins el vector.</p>
+<p><tt class="docutils literal"><span class="pre">dstPts</span></tt> - el vector al que s&#8217;escriuràn les coordenades transformades. Pot ser el mateix que <tt class="docutils literal"><span class="pre">srcPts</span></tt>.</p>
+<p><tt class="docutils literal"><span class="pre">dstOff</span></tt> - la primera posició del vector en la que es començaran a escriure els punts transformats.</p>
+<p><tt class="docutils literal"><span class="pre">numPts</span></tt> - el número de punts a transformar.</p>
+<p>Llença:</p>
+<p><tt class="docutils literal"><span class="pre">TransformException</span></tt> - si s&#8217;esdevé un error en la càrrega del fitxer de malla
+(probabilitat baixa, doncs s&#8217;ha comprovat la seva integritat en el constructor).</p>
+</div>
+<div class="section" id="inversetransform">
+<h3>inverseTransform<a class="headerlink" href="#inversetransform" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><pre>public void inverseTransform(double[] srcPts,
+                             int srcOff,
+                             double[] dstPts,
+                             int dstOff,
+                             int numPts)
+                      throws TransformException</pre>
+</div>
+<p>Transformació inversa. Vegeu <a class="reference internal" href="#transform">transform</a>.</p>
+<p>Paràmetres:</p>
+<p><tt class="docutils literal"><span class="pre">srcPts</span></tt> - el vector que conté les coordenades d&#8217;entrada.</p>
+<p><tt class="docutils literal"><span class="pre">srcOff</span></tt> - la posició del primer punt a transformar dins el vector.</p>
+<p><tt class="docutils literal"><span class="pre">dstPts</span></tt> - el vector al que s&#8217;escriuràn les coordenades transformades. Pot ser el mateix que <tt class="docutils literal"><span class="pre">srcPts</span></tt>.</p>
+<p><tt class="docutils literal"><span class="pre">dstOff</span></tt> - la primera posició del vector en la que es començaran a escriure els punts transformats.</p>
+<p><tt class="docutils literal"><span class="pre">numPts</span></tt> - el número de punts a transformar.</p>
+<p>Llença:</p>
+<p><tt class="docutils literal"><span class="pre">TransformException</span></tt> - si s&#8217;esdevé un error en la càrrega del fitxer de malla
+(probabilitat escassa, doncs s&#8217;ha comprovat la seva integritat en el constructor).</p>
+</div>
+<div class="section" id="getsourcedimensions">
+<h3>getSourceDimensions<a class="headerlink" href="#getsourcedimensions" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kt">int</span> <span class="nf">getSourceDimensions</span><span class="o">()</span>
+</pre></div>
+</div>
+<p>La dimensió dels punts d&#8217;entrada (2).</p>
+<p>Especificat a:</p>
+<p><tt class="docutils literal"><span class="pre">getSourceDimensions</span></tt> a la interfície <tt class="docutils literal"><span class="pre">MathTransform</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">getSourceDimensions</span></tt> a la classe <tt class="docutils literal"><span class="pre">AbstractMathTransform</span></tt></p>
+</div>
+<div class="section" id="gettargetdimensions">
+<h3>getTargetDimensions<a class="headerlink" href="#gettargetdimensions" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kt">int</span> <span class="nf">getTargetDimensions</span><span class="o">()</span>
+</pre></div>
+</div>
+<p>La dimensió dels punts de sortida (2).</p>
+<p>Especificat a:</p>
+<p><tt class="docutils literal"><span class="pre">getTargetDimensions</span></tt> a la interfície <tt class="docutils literal"><span class="pre">MathTransform</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">getTargetDimensions</span></tt> a la classe <tt class="docutils literal"><span class="pre">AbstractMathTransform</span></tt></p>
+</div>
+<div class="section" id="getparametervalues">
+<h3>getParameterValues<a class="headerlink" href="#getparametervalues" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="n">ParameterValueGroup</span> <span class="nf">getParameterValues</span><span class="o">()</span>
+</pre></div>
+</div>
+<p>Retorna els valors dels paràmetres per a aquesta transformació matemàtica.</p>
+<p>Sobreescriu:</p>
+<p><tt class="docutils literal"><span class="pre">getParameterValues</span></tt> a la classe <tt class="docutils literal"><span class="pre">AbstractMathTransform</span></tt></p>
+<p>Retorna:</p>
+<p>Una còpia dels valors dels paràmetres per a aquesta transformació matemàtica.</p>
+<p>Vegeu tamé:</p>
+<p><tt class="docutils literal"><span class="pre">Operation.getParameterValues()</span></tt></p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Taula de Contingut</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">NTv2Transform</a><ul>
+<li><a class="reference internal" href="#atributs">Atributs</a><ul>
+<li><a class="reference internal" href="#logger">LOGGER</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#constructor">Constructor</a><ul>
+<li><a class="reference internal" href="#id1">NTv2Transform</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#metodes">Mètodes</a><ul>
+<li><a class="reference internal" href="#hashcode">hashCode</a></li>
+<li><a class="reference internal" href="#equals">equals</a></li>
+<li><a class="reference internal" href="#inverse">inverse</a></li>
+<li><a class="reference internal" href="#transform">transform</a></li>
+<li><a class="reference internal" href="#inversetransform">inverseTransform</a></li>
+<li><a class="reference internal" href="#getsourcedimensions">getSourceDimensions</a></li>
+<li><a class="reference internal" href="#gettargetdimensions">getTargetDimensions</a></li>
+<li><a class="reference internal" href="#getparametervalues">getParameterValues</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Tema anterior</h4>
+  <p class="topless"><a href="SimilarityTransformProvider.html"
+                        title="capítol anterior">SimilarityTransformProvider</a></p>
+  <h4>Tema següent</h4>
+  <p class="topless"><a href="NTv2Transform.Provider.html"
+                        title="capítol següent">NTv2Transform.Provider</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Cerca ràpida</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Ves a" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Entra paraules de cerca o el nom d'un mòdul, classe o funció.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navegació</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="NTv2Transform.Provider.html" title="NTv2Transform.Provider"
+             >següent</a></li>
+        <li class="right" >
+          <a href="SimilarityTransformProvider.html" title="SimilarityTransformProvider"
+             >anterior</a> |</li>
+        <li><a href="../index.html">Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</a> &raquo;</li>
+          <li><a href="../geotools.html" >Desenvolupament a GeoTools</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Oscar Fonts.
+      Creat amb <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

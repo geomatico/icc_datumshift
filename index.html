@@ -1,0 +1,146 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver &mdash; Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="top" title="Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation" href="#" />
+    <link rel="next" title="Introducció" href="intro.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navegació</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="intro.html" title="Introducció"
+             accesskey="N">següent</a></li>
+        <li><a href="#">Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="incorporacio-de-transformacions-de-malla-ntv2-a-geotools-i-a-geoserver">
+<h1>Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver<a class="headerlink" href="#incorporacio-de-transformacions-de-malla-ntv2-a-geotools-i-a-geoserver" title="Link permanent a aquest títol">¶</a></h1>
+<p>Continguts:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introducció</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#tasques-realitzades">Tasques realitzades</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#condicions-d-us-i-reutilitzacio-d-aquest-document">Condicions d&#8217;ús i reutilització d&#8217;aquest document</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="geotools.html">Desenvolupament a GeoTools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="geotools.html#transformacio-de-semblanca">Transformació de semblança</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="geotools.html#determinacio-i-instanciacio-d-una-transformacio">Determinació i instanciació d&#8217;una transformació</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="geotools.html#transformacions-de-malla">Transformacions de malla</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="geotools.html#invocacio-d-una-transformacio-de-coordenades">Invocació d&#8217;una transformació de coordenades</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="geotools.html#operacions-de-coordenades-personalitzades">Operacions de coordenades personalitzades</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="geotools.html#operacions-personalitzades-sintaxi-i-exemples">Operacions personalitzades. Sintaxi i exemples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geotools.html#instanciacio-de-factories">Instanciació de factories</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geotools.html#instanciacio-d-una-transformacio-matematica-personalitzada">Instanciació d&#8217;una transformació matemàtica personalitzada</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="geotools.html#javadoc">Javadoc</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/SimilarityTransformProvider.html">SimilarityTransformProvider</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2Transform.html">NTv2Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2Transform.Provider.html">NTv2Transform.Provider</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2GridShiftFactory.html">NTv2GridShiftFactory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/GridShiftLocator.html">GridShiftLocator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/ClasspathGridShiftLocator.html">ClasspathGridShiftLocator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/PropertyCoordinateOperationAuthorityFactory.html">PropertyCoordinateOperationAuthorityFactory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/CoordinateOperationFactoryUsingWKT.html">CoordinateOperationFactoryUsingWKT</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="geoserver.html">Desenvolupament a GeoServer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">Conjunt de proves realitzades</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#tests-unitaris">Tests unitaris</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#tests-de-rendiment">Tests de rendiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#tests-de-precisio">Tests de precisió</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#tests-d-integracio">Tests d&#8217;integració</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="use.html">Guia ràpida de configuració a GeoServer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thanks.html">Agraïments</a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Tema següent</h4>
+  <p class="topless"><a href="intro.html"
+                        title="capítol següent">Introducció</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Cerca ràpida</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Ves a" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Entra paraules de cerca o el nom d'un mòdul, classe o funció.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navegació</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="intro.html" title="Introducció"
+             >següent</a></li>
+        <li><a href="#">Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Oscar Fonts.
+      Creat amb <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

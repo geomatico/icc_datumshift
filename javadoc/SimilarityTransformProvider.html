@@ -1,0 +1,221 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>SimilarityTransformProvider &mdash; Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="top" title="Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation" href="../index.html" />
+    <link rel="up" title="Desenvolupament a GeoTools" href="../geotools.html" />
+    <link rel="next" title="NTv2Transform" href="NTv2Transform.html" />
+    <link rel="prev" title="Desenvolupament a GeoTools" href="../geotools.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navegació</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="NTv2Transform.html" title="NTv2Transform"
+             accesskey="N">següent</a></li>
+        <li class="right" >
+          <a href="../geotools.html" title="Desenvolupament a GeoTools"
+             accesskey="P">anterior</a> |</li>
+        <li><a href="../index.html">Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</a> &raquo;</li>
+          <li><a href="../geotools.html" accesskey="U">Desenvolupament a GeoTools</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="similaritytransformprovider">
+<h1>SimilarityTransformProvider<a class="headerlink" href="#similaritytransformprovider" title="Link permanent a aquest títol">¶</a></h1>
+<div class="highlight-java"><div class="highlight"><pre><span class="kn">package</span> <span class="n">org</span><span class="o">.</span><span class="na">geotools</span><span class="o">.</span><span class="na">referencing</span><span class="o">.</span><span class="na">operation</span><span class="o">.</span><span class="na">transform</span>
+</pre></div>
+</div>
+<p>Herència:</p>
+<div class="highlight-python"><pre>Object
+  Formattable
+      AbstractIdentifiedObject
+          DefaultOperationMethod
+              MathTransformProvider
+                  SimilarityTransformProvider</pre>
+</div>
+<p>Signatura:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SimilarityTransformProviderextends</span> <span class="n">MathTransformProvider</span>
+</pre></div>
+</div>
+<p>Descripció:</p>
+<p>El <em>provider</em> per a la &#8220;Similarity transformation&#8221; (EPSG 9621).</p>
+<p>Advertiu que la transformació de semblança és un cas particular d&#8217;una transformació afí 2D.</p>
+<p>Autor:</p>
+<p>Oscar Fonts</p>
+<div class="section" id="atributs">
+<h2>Atributs<a class="headerlink" href="#atributs" title="Link permanent a aquest títol">¶</a></h2>
+<div class="section" id="translation-1">
+<h3>TRANSLATION_1<a class="headerlink" href="#translation-1" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">ParameterDescriptor</span><span class="o">&lt;</span><span class="n">Double</span><span class="o">&gt;</span> <span class="n">TRANSLATION_1</span>
+</pre></div>
+</div>
+<p>&#8220;Ordinate 1 of evaluation point in target CRS&#8221; EPSG::8621</p>
+</div>
+<div class="section" id="translation-2">
+<h3>TRANSLATION_2<a class="headerlink" href="#translation-2" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">ParameterDescriptor</span><span class="o">&lt;</span><span class="n">Double</span><span class="o">&gt;</span> <span class="n">TRANSLATION_2</span>
+</pre></div>
+</div>
+<p>&#8220;Ordinate 2 of evaluation point in target CRS&#8221; EPSG::8622</p>
+</div>
+<div class="section" id="scale">
+<h3>SCALE<a class="headerlink" href="#scale" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">ParameterDescriptor</span><span class="o">&lt;</span><span class="n">Double</span><span class="o">&gt;</span> <span class="n">SCALE</span>
+</pre></div>
+</div>
+<p>&#8220;Scale difference&#8221; EPSG::8611</p>
+</div>
+<div class="section" id="rotation">
+<h3>ROTATION<a class="headerlink" href="#rotation" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">ParameterDescriptor</span><span class="o">&lt;</span><span class="n">Double</span><span class="o">&gt;</span> <span class="n">ROTATION</span>
+</pre></div>
+</div>
+<p>&#8220;Rotation angle of source coordinate reference system axes&#8221; EPSG::8614</p>
+</div>
+</div>
+<div class="section" id="constructors">
+<h2>Constructors<a class="headerlink" href="#constructors" title="Link permanent a aquest títol">¶</a></h2>
+<div class="section" id="id1">
+<h3>SimilarityTransformProvider<a class="headerlink" href="#id1" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="nf">SimilarityTransformProvider</span><span class="o">()</span>
+</pre></div>
+</div>
+<p>Crea una transformació de semblança 2D. EPSG defineix explícitament aquesta transformació com a bidimensional.</p>
+</div>
+</div>
+<div class="section" id="metodes">
+<h2>Mètodes<a class="headerlink" href="#metodes" title="Link permanent a aquest títol">¶</a></h2>
+<div class="section" id="createmathtransform">
+<h3>createMathTransform<a class="headerlink" href="#createmathtransform" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><pre>protected MathTransform createMathTransform(ParameterValueGroup values)
+    throws ParameterNotFoundException</pre>
+</div>
+<p>Construeix una transformació matemàtica <tt class="docutils literal"><span class="pre">AffineTransform2D</span></tt> amb els valors de paràmetres especificats.
+La transformació de semblança és un cas particular d&#8217;una transformació afí 2D on:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">m00</span> <span class="o">=</span> <span class="n">SCALE</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">ROTATION</span><span class="p">)</span>
+<span class="n">m01</span> <span class="o">=</span> <span class="n">SCALE</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">ROTATION</span><span class="p">)</span>
+<span class="n">m02</span> <span class="o">=</span> <span class="n">TRANSLATION_1</span>
+<span class="n">m10</span> <span class="o">=</span> <span class="o">-</span><span class="n">m01</span>
+<span class="n">m11</span> <span class="o">=</span> <span class="n">m00</span>
+<span class="n">m12</span> <span class="o">=</span> <span class="n">TRANSLATION_2</span>
+</pre></div>
+</div>
+<p>Especificat a:</p>
+<p><tt class="docutils literal"><span class="pre">createMathTransform</span></tt> a la classe <tt class="docutils literal"><span class="pre">MathTransformProvider</span></tt>.</p>
+<p>Paràmetres:</p>
+<p><tt class="docutils literal"><span class="pre">values</span></tt> - Els valors per al grup de paràmetres <tt class="docutils literal"><span class="pre">PARAMETERS</span></tt></p>
+<p>Retorn:</p>
+<p>Una <tt class="docutils literal"><span class="pre">AffineTransform2D</span></tt>.</p>
+<p>Llença:</p>
+<p><tt class="docutils literal"><span class="pre">ParameterNotFoundException</span></tt> - si falta algun dels paràmetres obligatoris.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Taula de Contingut</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">SimilarityTransformProvider</a><ul>
+<li><a class="reference internal" href="#atributs">Atributs</a><ul>
+<li><a class="reference internal" href="#translation-1">TRANSLATION_1</a></li>
+<li><a class="reference internal" href="#translation-2">TRANSLATION_2</a></li>
+<li><a class="reference internal" href="#scale">SCALE</a></li>
+<li><a class="reference internal" href="#rotation">ROTATION</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#constructors">Constructors</a><ul>
+<li><a class="reference internal" href="#id1">SimilarityTransformProvider</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#metodes">Mètodes</a><ul>
+<li><a class="reference internal" href="#createmathtransform">createMathTransform</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Tema anterior</h4>
+  <p class="topless"><a href="../geotools.html"
+                        title="capítol anterior">Desenvolupament a GeoTools</a></p>
+  <h4>Tema següent</h4>
+  <p class="topless"><a href="NTv2Transform.html"
+                        title="capítol següent">NTv2Transform</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Cerca ràpida</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Ves a" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Entra paraules de cerca o el nom d'un mòdul, classe o funció.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navegació</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="NTv2Transform.html" title="NTv2Transform"
+             >següent</a></li>
+        <li class="right" >
+          <a href="../geotools.html" title="Desenvolupament a GeoTools"
+             >anterior</a> |</li>
+        <li><a href="../index.html">Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</a> &raquo;</li>
+          <li><a href="../geotools.html" >Desenvolupament a GeoTools</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Oscar Fonts.
+      Creat amb <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

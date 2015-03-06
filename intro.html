@@ -1,0 +1,179 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introducció &mdash; Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="top" title="Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation" href="index.html" />
+    <link rel="next" title="Desenvolupament a GeoTools" href="geotools.html" />
+    <link rel="prev" title="Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver" href="index.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navegació</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="geotools.html" title="Desenvolupament a GeoTools"
+             accesskey="N">següent</a></li>
+        <li class="right" >
+          <a href="index.html" title="Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver"
+             accesskey="P">anterior</a> |</li>
+        <li><a href="index.html">Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="introduccio">
+<h1>Introducció<a class="headerlink" href="#introduccio" title="Link permanent a aquest títol">¶</a></h1>
+<p>El <em>Real Decreto 1071/2007</em>, estableix el sistema ETRS89 com el sistema geodèsic oficial per a Espanya. A partir de l’1 de gener de 2012, tot nou projecte inscrit al Registre Central de Cartografia ha d’estar referit a aquest nou sistema de referència, i la producció existent s’haurà d’anar adaptant durant un període de transició durant el qual ETRS89 conviurà amb l’antic sistema ED50. El període de transició finalitza l’1 de gener del 2015.</p>
+<p>L’Institut Cartogràfic de Catalunya ha establert una transformació bidimensional de semblança aplicable a la cartografia d’escales fins a 1:1 000, catalogada amb el codi EPSG:5166, que permet la transformació entre els sistemes de referència ED50 i ETRS89. Molts dels productes de software existents no suporten aquest tipus de transformació bidimensional directa, però sí que poden incorporar malles de transformació en format NTv2, per la qual cosa, l’ICC també ha publicat la transformació en aquest format.</p>
+<p>Per tal de poder utilitzar aquesta transformació a les aplicacions existents, cal que al menys tinguin la capacitat de realitzar transformacions de malla basades en el format NTv2. La llibreria de codi lliure GeoTools, en la que es basen nombroses aplicacions Java com el servidor de mapes GeoServer o el SIG d’escriptori uDig, encara no disposava d’aquesta capacitat.</p>
+<p>S&#8217;ha incorporat a GeoTools i a GeoServer la capacitat de transformació basada en malles NTv2, i a més s&#8217;ha incorporat la transformació oficial de semblança, que resulta més eficient per a transormacions directes en la projecció UTM.</p>
+<p>Les properes versions de GeoTools 8.0 i GeoServer 2.2, actualment en fase de proves, incorporaràn aquestes noves capacitats.</p>
+<div class="section" id="tasques-realitzades">
+<h2>Tasques realitzades<a class="headerlink" href="#tasques-realitzades" title="Link permanent a aquest títol">¶</a></h2>
+<ol class="arabic simple">
+<li>Incorporació de la llibreria <cite>jGridShift</cite> com un nou transformador dins del mòdul de referenciació espacial de GeoTools.</li>
+<li>Establiment dels mecanismes per declarar l’existència de malles de transformació a diferents ubicacions, depenent del context d’execució.</li>
+<li>Modificació de l’algorisme que escull la transformació a emprar en cada moment. Contempla dos possibles escenaris:<ul>
+<li>Descoberta automàtica de la transformació més adient, a partir de la base de dades EPSG.</li>
+<li>Forçat de l’ús d’una transformació concreta, configurable per l’usuari.</li>
+</ul>
+</li>
+<li>Integració d’aquesta nova funcionalitat base al projecte GeoServer.</li>
+<li>Desenvolupament de tests unitaris per ambdós projectes, mitjançant <cite>JUnit</cite>.</li>
+<li>Documentació del codi per a desenvolupadors, mitjançant <cite>Javadoc</cite>.</li>
+<li>Ampliació del manual d&#8217;usuari (oficial, en anglès) de GeoServer.</li>
+<li>Seguiment de la incorporació del nou codi i documentació a les següents versions oficials d’ambdós projectes, incloent-hi suport tècnic i seguiment de les proves realitzades per altres usuaris en les fases <em>beta</em> dels productes.</li>
+<li>Tests de precisió i rendiment de l’aplicació, en tres escenaris:<ul>
+<li>Transformació de 7 paràmetres sel·leccionada per GeoServer en l&#8217;escenari previ a aquest desenvolupament.</li>
+<li>Transformació de semblança bidimensional EPSG:5166.</li>
+<li>Transformació mitjançant la malla NTv2 <cite>100800401.gsb</cite>.</li>
+</ul>
+</li>
+<li>Tests d&#8217;integració funcional a GeoServer.</li>
+<li>Redacció d’aquest informe.</li>
+</ol>
+<p>El codi i documentació aportats als projectes reste sotmesos a les llicències i condicions d’ús establertes als projectes als quals s’incorporen: LGPL per al codi de GeoTools, i GPL per al codi de GeoServer.</p>
+<p>El codi i documentació oficials dels projectes es poden consultar a partir dels respectius llocs web:</p>
+<ul class="simple">
+<li>GeoTools: <a class="reference external" href="http://www.geotools.org">http://www.geotools.org</a></li>
+<li>GeoServer: <a class="reference external" href="http://www.geoserver.org">http://www.geoserver.org</a></li>
+</ul>
+</div>
+<div class="section" id="condicions-d-us-i-reutilitzacio-d-aquest-document">
+<h2>Condicions d&#8217;ús i reutilització d&#8217;aquest document<a class="headerlink" href="#condicions-d-us-i-reutilitzacio-d-aquest-document" title="Link permanent a aquest títol">¶</a></h2>
+<p>Aquest document està subjecte a una llicència <a class="reference external" href="http://creativecommons.org/licenses/by-sa/3.0/">Reconeixement-CompartirIgual 3.0 No adaptada de Creative Commons</a>.</p>
+<div class="figure align-center">
+<img alt="_images/CC-by-sa.png" src="_images/CC-by-sa.png" />
+</div>
+<p>Sou lliures de:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Copiar, distribuir i comunicar públicament l&#8217;obra.</li>
+<li>Fer-ne obres derivades.</li>
+<li>Fer un ús comercial de l&#8217;obra.</li>
+</ul>
+</div></blockquote>
+<p>Amb les condicions següents:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>Reconeixement</strong>: Heu de reconèixer els crèdits de l&#8217;obra de la manera especificada per l&#8217;autor o el llicenciador (però no d&#8217;una manera que suggereixi que us donen suport o rebeu suport per l&#8217;ús que feu l&#8217;obra).</li>
+<li><strong>Compartir Igual</strong>: Si altereu o transformeu aquesta obra, o en genereu obres derivades, només podeu distribuir l&#8217;obra generada amb una llicència idèntica a aquesta.</li>
+</ul>
+</div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Nota</p>
+<p class="last">Quan reutilitzeu o distribuïu l&#8217;obra, heu de deixar ben clar els termes de la llicència de l&#8217;obra.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Taula de Contingut</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Introducció</a><ul>
+<li><a class="reference internal" href="#tasques-realitzades">Tasques realitzades</a></li>
+<li><a class="reference internal" href="#condicions-d-us-i-reutilitzacio-d-aquest-document">Condicions d&#8217;ús i reutilització d&#8217;aquest document</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Tema anterior</h4>
+  <p class="topless"><a href="index.html"
+                        title="capítol anterior">Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver</a></p>
+  <h4>Tema següent</h4>
+  <p class="topless"><a href="geotools.html"
+                        title="capítol següent">Desenvolupament a GeoTools</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Cerca ràpida</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Ves a" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Entra paraules de cerca o el nom d'un mòdul, classe o funció.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navegació</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="geotools.html" title="Desenvolupament a GeoTools"
+             >següent</a></li>
+        <li class="right" >
+          <a href="index.html" title="Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver"
+             >anterior</a> |</li>
+        <li><a href="index.html">Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Oscar Fonts.
+      Creat amb <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

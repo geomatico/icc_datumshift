@@ -1,0 +1,472 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Desenvolupament a GeoTools &mdash; Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="top" title="Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation" href="index.html" />
+    <link rel="next" title="SimilarityTransformProvider" href="javadoc/SimilarityTransformProvider.html" />
+    <link rel="prev" title="Introducció" href="intro.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navegació</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="javadoc/SimilarityTransformProvider.html" title="SimilarityTransformProvider"
+             accesskey="N">següent</a></li>
+        <li class="right" >
+          <a href="intro.html" title="Introducció"
+             accesskey="P">anterior</a> |</li>
+        <li><a href="index.html">Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="desenvolupament-a-geotools">
+<h1>Desenvolupament a GeoTools<a class="headerlink" href="#desenvolupament-a-geotools" title="Link permanent a aquest títol">¶</a></h1>
+<p>GeoTools està construït de manera que la seva funcionalitat pugui ser ampliada mitjançant <em>plug-ins</em>, sense haver de modificar el codi base. D&#8217;aquesta manera, es poden afegir noves implementacions de les API existents simplement afegint les noves llibreries al classpath.</p>
+<p>GeoTools utilitza un sistema de descoberta de noves funcionalitats, anomenat SPI (Service Provider Interface), proporcionat de manera estàndard per Java.</p>
+<p>Les API defineixen una sèrie d&#8217;interfícies. Les diferents implementacions s&#8217;instancien mitjançant factories, que es registren a l&#8217;SPI per ser descobertes en temps d&#8217;execució.</p>
+<div class="section" id="transformacio-de-semblanca">
+<h2>Transformació de semblança<a class="headerlink" href="#transformacio-de-semblanca" title="Link permanent a aquest títol">¶</a></h2>
+<p>Una transformació afí es defineix amb una matriu 3x3, de la següent forma:</p>
+<div class="math" id="equation-Matriu de transformació afí 2D.">
+<p><span class="eqno">(1)</span><img src="_images/math/ccf792595a4852f44e16a4ffcc4dbc04154ef768.png" alt="\begin{bmatrix} x' \\ y' \\ 1 \end{bmatrix} =
+\begin{bmatrix} m_{00} &amp; m_{01} &amp; m_{02} \\
+m_{10} &amp; m_{11} &amp; m_{12} \\ 0 &amp; 0 &amp; 1 \end{bmatrix}
+\begin{bmatrix} x \\ y \\ 1 \end{bmatrix}"/></p>
+</div><p>La transformació de semblança es pot expressar com una transformació afí:</p>
+<div class="math" id="equation-Transformació de semblança expressada com a matriu de transformació afí 2D.">
+<p><span class="eqno">(2)</span><img src="_images/math/bd04c588d0441f2ec07ca6b940fe4bf3773b7ca6.png" alt="\begin{bmatrix} x' \\ y' \\ 1 \end{bmatrix} =
+\begin{bmatrix} \alpha cos(\theta) &amp; \alpha sin(\theta) &amp; t_x \\
+-\alpha sin(\theta) &amp; \alpha cos(\theta) &amp; t_y \\ 0 &amp; 0 &amp; 1 \end{bmatrix}
+\begin{bmatrix} x \\ y \\ 1 \end{bmatrix}"/></p>
+</div><p>on <img class="math" src="_images/math/8ff3fbc0b0f76cb34716de3dd4d4f09bba4619ca.png" alt="t_x"/> i <img class="math" src="_images/math/05f932207af2b03f7deb32fe6f2c01d1ed4eaf5b.png" alt="t_y"/> és la traslació, <img class="math" src="_images/math/52e8ed7a3ba22130ad3984eb2cd413406475a689.png" alt="\theta"/> la rotació, i <img class="math" src="_images/math/10f32377ac67d94f764f12a15ea987e88c85d3e1.png" alt="\alpha"/> el factor d&#8217;escala.</p>
+<p>Les transformacions matemàtiques s&#8217;instancien mitjançant la implementació per defecte de la interfície <tt class="docutils literal"><span class="pre">MathTransformFactory</span></tt>, anomenada <tt class="docutils literal"><span class="pre">DefaultMathTransformFactory</span></tt>. Aquesta factoria crearà una <tt class="docutils literal"><span class="pre">MathTransform</span></tt> d&#8217;un tipus o un altre en funció dels paràmetres que rebi. La creació es produeix invocant el <tt class="docutils literal"><span class="pre">Provider</span></tt>, concretament el seu mètode <tt class="docutils literal"><span class="pre">createMathTransform</span></tt>.</p>
+<p>Per tant, l&#8217;estratègia d&#8217;implementació ha consistit, simplement, a crear un <tt class="docutils literal"><span class="pre">SimilarityTransformProvider</span></tt> que calcula els valors de la matriu per instanciar una <tt class="docutils literal"><span class="pre">AffineTransform2D</span></tt> seguint la definició matricial descrita.</p>
+<p>Internament, doncs, GeoToools tractarà la transformació de semblança com una transformació afí a tots els efectes, encara que hagi estat creada a partir d&#8217;una definició de transformció de semblança.</p>
+<p>Un altre objectiu del <tt class="docutils literal"><span class="pre">Provider</span></tt> és definir els noms i identificadors EPSG de que es composa aquesta transformació:</p>
+<ul class="simple">
+<li><em>Similarity transformation</em> (EPSG::9621):<ul>
+<li><em>Ordinate 1 of evaluation point in target CRS</em> (EPSG::8621).</li>
+<li><em>Ordinate 2 of evaluation point in target CRS</em> (EPSG::8622).</li>
+<li><em>Scale difference</em> (EPSG::8611).</li>
+<li><em>Rotation angle of source coordinate reference system axes</em> (EPSG::8614).</li>
+</ul>
+</li>
+</ul>
+<p>El descriptor de l&#8217;operació permet a <tt class="docutils literal"><span class="pre">MathTransformFactory</span></tt> deduïr quin tipus de <tt class="docutils literal"><span class="pre">MathTransformProvider</span></tt> ha d&#8217;invocar, i els descriptors de cada paràmetre permeten comprovar que els valors es troben dins dels rangs permesos.</p>
+<div class="figure align-center">
+<a class="reference external image-reference" href="_images/GEOT-Similarity_Class.PNG"><img alt="_images/GEOT-Similarity_Class.PNG" src="_images/GEOT-Similarity_Class.PNG" /></a>
+<p class="caption">Classes rellevants per a la transformació de semblança.</p>
+</div>
+<div class="section" id="determinacio-i-instanciacio-d-una-transformacio">
+<h3>Determinació i instanciació d&#8217;una transformació<a class="headerlink" href="#determinacio-i-instanciacio-d-una-transformacio" title="Link permanent a aquest títol">¶</a></h3>
+<p>A GeoTools, la instanciació d&#8217;una operació de coordenades s&#8217;acostuma a fer amb aquesta crida:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">CRS</span><span class="o">.</span><span class="n">findMathTransform</span><span class="p">(</span><span class="n">sourceCRS</span><span class="p">,</span> <span class="n">targetCRS</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Al darrera d&#8217;aquesta crida aparentment senzilla, s&#8217;engega un costós procés per determinar de forma automàtica quina és la millor de les operacions disponibles. Per aquest motiu, un cop determinada, s&#8217;emmagatzema el resultat en memòria. <tt class="docutils literal"><span class="pre">BufferedCoordinateOperationFactory</span></tt> s&#8217;encarrega de la gestió d&#8217;aquesta <cite>caché</cite> d&#8217;operacions, i, per tant, és la primera factoria a ser invocada. Si no es troba la operació, es delegarà en <tt class="docutils literal"><span class="pre">AuthorityBackedFactory</span></tt>, que conté una base de dades (de fet, una <em>backingFactory</em>) procedent d&#8217;una autoritat. Així, el primer pas per a la resolució de la operació es farà consultant la base de dades d&#8217;aquesta autoritat.</p>
+<p>L&#8217;autoritat per defecte és EPSG. La consulta a la base de dades EPSG és <em>multithread</em>, per no representar un coll d&#8217;ampolla en entorns on s&#8217;han de resoldre consultes simultànies (per exemple, quan el codi s&#8217;executa dins un servidor web), i fa servir un gestor anomenat HSQL, lleuger, i basat en fitxer. De la consulta a la BDD s&#8217;encarreguen les classes <tt class="docutils literal"><span class="pre">ThreadedHsqlEpsgFactory</span></tt> i <tt class="docutils literal"><span class="pre">FactoryUsingHSQL</span></tt>.</p>
+<p>S&#8217;extreuen de la Base de Dades totes les operacions disponibles entre els dos CRS donats, per ordre ascendent d&#8217;error associat (per tant, les operacions més precises s&#8217;avaluen abans). Les dades sobre les operacions es carreguen a un <tt class="docutils literal"><span class="pre">CoordinateOperationSet</span></tt>. Per estalviar recursos, les operacions matemàtiques en si només s&#8217;instanciaran el primer cop que siguin requerides. S&#8217;itera llavors sobre aquesta col·lecció, fins que s&#8217;aconsegueix instanciar una de les operacions.</p>
+<p>Pot ser que no es pugui instanciar alguna de les primeres operacions, bé perquè GeoTools no implementa l&#8217;algorisme (com passava amb la semblança fins ara), bé perquè no disposa de les dades necessàries (pensem, per exemple, en una transformació NTv2 de la que no disposem de la malla), o bé perquè els paràmetres són erronis o incoherents a la BDD (podria passar).</p>
+<p>És aquest iterador <tt class="docutils literal"><span class="pre">Iter</span></tt> el que intenta instanciar les operacions, fent una crida de nou a <tt class="docutils literal"><span class="pre">ThreadedHsqlEpsgFactory</span></tt> i <tt class="docutils literal"><span class="pre">FactoryUsingHsql</span></tt>. En aquesta ocasió, aquestes classes s&#8217;encarreguen d&#8217;adaptar el contingut de la BDD a les característiques finals de l&#8217;operació demanada. Per exemple, garantint cert ordre dels eixos [(lat, lon) vs. (lon, lat)], o convertint unitats.</p>
+<p>Podria ser que no es trobés la operació directa a la Base de Dades. Llavors es procediria a buscar camins indirectes per resoldre la operació (per exemple, un camí habitual de transformació és passar de coordenades projectades a geodèsiques, a geocèntriques, fer un canvi de base utilitzant els paràmetres de la BDD, i tornar a convertir a coordenades projectades mitjançant el procés invers).</p>
+<p>En el noste cas, la operació EPSG::5166 es troba a la base de dades EPSG, és directa, i sabem resoldre-la. Es crida a <tt class="docutils literal"><span class="pre">DefaultMathTransformFactory</span></tt>, que examinant els paràmetres, arriba al nostre nou <tt class="docutils literal"><span class="pre">SimilarityTransformProvider</span></tt>, que retorna una <tt class="docutils literal"><span class="pre">AffineTransform2D</span></tt>.</p>
+<p>En el camí de tornada, <tt class="docutils literal"><span class="pre">BufferedCoordinateOperationFactory</span></tt> desarà el resultat a la seva caché, de manera que, quan es torni a demanar la mateixa operació en crides posteriors, no caldrà tornar a consultar la base de dades EPSG en busca dels paràmetres.</p>
+<div class="figure align-center">
+<a class="reference external image-reference" href="_images/GEOT-Similarity_Sequence.PNG"><img alt="_images/GEOT-Similarity_Sequence.PNG" src="_images/GEOT-Similarity_Sequence.PNG" /></a>
+<p class="caption">Descoberta i instanciació d&#8217;una transformació matemàtica.</p>
+</div>
+</div>
+</div>
+<div class="section" id="transformacions-de-malla">
+<h2>Transformacions de malla<a class="headerlink" href="#transformacions-de-malla" title="Link permanent a aquest títol">¶</a></h2>
+<p>Per fer la transformació de malla NTv2 s&#8217;ha utilitzat la llibreria <a class="reference external" href="http://jgridshift.sourceforge.net/">jGridShift</a>. Aquesta llibreria té dues formes d&#8217;operar amb les malles.</p>
+<p>La primera consisteix a anar accedint al fitxer de malla cada vegada que se solicita la transformació d&#8217;una coordenada:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="n">GridShiftFile</span> <span class="n">gsf</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GridShiftFile</span><span class="o">();</span>
+<span class="n">RandomAccessFile</span> <span class="n">raf</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RandomAccessFile</span><span class="o">(</span><span class="s">&quot;100800401.gsb&quot;</span><span class="o">,</span><span class="s">&quot;r&quot;</span><span class="o">);</span>
+<span class="n">gsf</span><span class="o">.</span><span class="na">loadGridShiftFile</span><span class="o">(</span><span class="n">raf</span><span class="o">);</span>
+</pre></div>
+</div>
+<p>Aquest mètode estalvia temps i memòria en la càrrega de la malla, ja que només es consulta la part del fitxer necessària en cada moment. Però una transformació d&#8217;una col·lecció important de punts implica un accés repetit a disc, el que acaba enlentint notablement les operacions de reprojecció al vol.</p>
+<p>El segon mètode consisteix a carregar tota la malla en memòria:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="n">GridShiftFile</span> <span class="n">gsf</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GridShiftFile</span><span class="o">();</span>
+<span class="n">InputStream</span> <span class="n">in</span> <span class="o">=</span> <span class="k">new</span> <span class="n">URL</span><span class="o">(</span><span class="s">&quot;file:100800401.gsb&quot;</span><span class="o">).</span><span class="na">openStream</span><span class="o">();</span>
+<span class="n">gsf</span><span class="o">.</span><span class="na">loadGridShiftFile</span><span class="o">(</span><span class="n">in</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+<span class="n">in</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</pre></div>
+</div>
+<p>Aquest mètode necessita tanta memòria com gran és el fitxer de malla, i la càrrega inicial és costosa en temps, havent de processar tot el fitxer.</p>
+<p>S&#8217;ha optat doncs per una solució òptima que combina tots dos mètodes:</p>
+<ul class="simple">
+<li>Utilitza el primer mètode per comprovar la integritat del fitxer de malla tan aviat com sigui possible. Fer aquesta comprovació és ràpid, no costa memòria, i evita acabar prenent com a bo un fitxer de malla corrupte, el que derivaria en errors posteriors de transformació no recuperables. D&#8217;aquesta manera, si el fitxer no es reconeix com a correcte, simplement s&#8217;informa l&#8217;usuari amb un <tt class="docutils literal"><span class="pre">warning</span></tt>, i es descarta el seu ús, utilitzant el següent mètode de transformació disponible (vegeu com s&#8217;itera sobre un <tt class="docutils literal"><span class="pre">CoordinateOperationSet</span></tt> a <a class="reference internal" href="#determinacio-i-instanciacio-d-una-transformacio">Determinació i instanciació d&#8217;una transformació</a>).</li>
+<li>Utilitza el segon mètode per carregar tota la malla en memòria, optimitzant el rendiment en les transformacions (pensem, per exemple, que la reprojecció al vol d&#8217;un servei WMS requereix la transformació ràpida de molts punts). La càrrega completa de la malla en memòria es retarda el més possible, només es carrega quan és realment necessari, en el moment de realitzar la primera transformació.</li>
+<li>Procura una gestió eficient dels recursos de memòria, mitjançant un <tt class="docutils literal"><span class="pre">SoftHashMap</span></tt> que actua com a caché dels fitxers de malla carregats. Així, un cop carregada una malla, aquesta es mantindrà en memòria per a posteriors usos, però no indefinidament. Aquesta caché assegura la permanència dels elements (malles) accedits més recentment, però en cas que el sistema necessiti memòria per a altres tasques, s&#8217;esporgaran les malles en desús. S&#8217;equilibra així l&#8217;ús de memòria amb els accessos a disc.</li>
+</ul>
+<div class="figure align-center">
+<a class="reference external image-reference" href="_images/GEOT-GridShift_Class.PNG"><img alt="_images/GEOT-GridShift_Class.PNG" src="_images/GEOT-GridShift_Class.PNG" /></a>
+<p class="caption">Classes rellevants per a les transformacions de malla (NTv2 i NADCON).</p>
+</div>
+<p>Al diagrama de classes observem que s&#8217;ha creat una nova transformació matemàtica, <tt class="docutils literal"><span class="pre">NTv2Transform</span></tt>, que embolcalla la classe <tt class="docutils literal"><span class="pre">GridShiftFile</span></tt> de <em>jGridShift</em> i l&#8217;adapta per al seu ús com a <tt class="docutils literal"><span class="pre">MathTransform</span></tt> de GeoTools. Com la operació és invertible, aquesta classe disposa dels mecanismes necessaris per aplicar la transformació en ambdues direccions.</p>
+<p><tt class="docutils literal"><span class="pre">NTv2Transform</span></tt> també conté el corresponent <tt class="docutils literal"><span class="pre">Provider</span></tt>, que, tal com s&#8217;ha vist a l&#8217;apartat anterior, conté els descriptors EPSG de la transformació i els seus paràmetres, així com el mètode per a instanciar-la. En aquest cas els descriptors són:</p>
+<ul class="simple">
+<li><em>NTv2</em> (EPSG::9615):<ul>
+<li><em>Latitude and longitude difference file</em> (EPSG::8656).</li>
+</ul>
+</li>
+</ul>
+<p>Una característica d&#8217;aquest tipus de transformació és que depèn d&#8217;un recurs extern, el fitxer de malla, que ha de proporcionar l&#8217;usuari. Depenent de l&#8217;entorn d&#8217;execució (GeoTools, GeoServer, uDig, etc.), aquest recurs pot trobar-se en diferents ubicacions.</p>
+<p>S&#8217;ha creat una interfície <tt class="docutils literal"><span class="pre">GridShiftLocator</span></tt> amb un sol mètode, <tt class="docutils literal"><span class="pre">locateGrid()</span></tt>, que, donat un nom d&#8217;un fitxer, retorna la localització (path absolut o URL) del recurs. I s&#8217;ha provist una implementació per defecte, el <tt class="docutils literal"><span class="pre">ClasspathGridShitfLocator</span></tt>, que farà una cerca del fitxer de malla a tot el classpath. Així, ubicant el <tt class="docutils literal"><span class="pre">.gsb</span></tt> al classpath, GeoTools el detectarà automàticament quan sigui necessari.</p>
+<p><tt class="docutils literal"><span class="pre">NTv2Transform</span></tt> té un mètode privat, també anomenat <tt class="docutils literal"><span class="pre">locateGrid()</span></tt>, que fa ús dels <tt class="docutils literal"><span class="pre">GridShiftLocator</span></tt> existents per cercar els fitxers de malla. Està previs que hi pugui haver al sistema diverses implementacions de <tt class="docutils literal"><span class="pre">GridShiftLocator</span></tt>, cadascuna amb una prioritat diferent, de manera que el mètode <tt class="docutils literal"><span class="pre">locateGrid()</span></tt> de <tt class="docutils literal"><span class="pre">NTv2Transform</span></tt> els utilitzi per ordre fins trobar el recurs. Veurem aquesta situació al <cite>Desenvolupament a GeoServer</cite>.</p>
+<p>En tot cas, després de localitzar el recurs, <tt class="docutils literal"><span class="pre">NTv2Transform</span></tt> invocarà la classe <tt class="docutils literal"><span class="pre">NTv2GridShiftFactory</span></tt>, encarregada de comprovar la integritat del fitxer, de la seva càrrega en memòria quan sigui oportú, i de gestionar la <em>softCache</em> de malles descrita anteriorment.</p>
+<p>GeoTools també incorporava una implementació de transformacions de malla en format NADCON. Aquesta funcionalitat no s&#8217;aprofitava a GeoServer perquè hi mancava una forma flexible d&#8217;indicar la localització dels fitxers de malla i de gestionar la seva càrrega en memòria.</p>
+<p>Per tant, s&#8217;ha aprofitat l&#8217;avinentesa per crear una <tt class="docutils literal"><span class="pre">NADCONGridShiftFactory</span></tt> i adaptar la <tt class="docutils literal"><span class="pre">NADCONTransform</span></tt> existent per fer ús de <tt class="docutils literal"><span class="pre">GridShiftLocator</span></tt>, de manera anàloga a com ho fa <tt class="docutils literal"><span class="pre">NTv2Transform</span></tt>. Aquest treball amb malles NADCON ha estat realitzada per Andrea Aime, i no forma part d&#8217;aquest encàrrec, pel que no entrarem en més detalls. Valgui destacar, però, com aquesta solució ha contribuït a la millora d&#8217;altres funcionalitats a GeoTools i GeoServer.</p>
+<div class="section" id="invocacio-d-una-transformacio-de-coordenades">
+<h3>Invocació d&#8217;una transformació de coordenades<a class="headerlink" href="#invocacio-d-una-transformacio-de-coordenades" title="Link permanent a aquest títol">¶</a></h3>
+<p>En la secció anterior hem vist com s&#8217;instancia una operació matemàtica a partir de la BDD EPSG. Per a les transformacions de malla, el procés és exactament el mateix. Vegem ara com s&#8217;utilitza aquesta transformació.</p>
+<p>El mètode habitual, un cop s&#8217;ha obtingut la <tt class="docutils literal"><span class="pre">MathTransform</span></tt>, és invocar:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kt">int</span> <span class="n">nPts</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+<span class="kt">double</span><span class="o">[]</span> <span class="n">srcPts</span> <span class="o">=</span> <span class="o">{</span><span class="mf">41.769413434</span><span class="o">,</span> <span class="mf">2.188547199</span><span class="o">};</span>
+<span class="kt">double</span><span class="o">[]</span> <span class="n">dstPts</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">double</span><span class="o">[</span><span class="mi">2</span><span class="o">];</span>
+<span class="n">mt</span><span class="o">.</span><span class="na">transform</span><span class="o">(</span><span class="n">srcPts</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">dstPts</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">nPts</span><span class="o">);</span>
+</pre></div>
+</div>
+<p>El diagrama de seqüència mostra la invocació d&#8217;una transformació <tt class="docutils literal"><span class="pre">NTv2</span></tt> utilitzant el fitxer <em>sped2et.gsb</em> procedent del CNIG, i que es troba registrat a la BDD EPSG per a les transformacions entre els CRS <tt class="docutils literal"><span class="pre">EPSG:4230</span></tt> i <tt class="docutils literal"><span class="pre">EPSG:4258</span></tt>.</p>
+<div class="figure align-center">
+<a class="reference external image-reference" href="_images/GEOT-GridShift_Sequence.PNG"><img alt="_images/GEOT-GridShift_Sequence.PNG" src="_images/GEOT-GridShift_Sequence.PNG" /></a>
+<p class="caption">Seqüència d&#8217;invocació d&#8217;una transformació de coordenades.</p>
+</div>
+<p>S&#8217;observa com la transformació <tt class="docutils literal"><span class="pre">NTv2Transform</span></tt> acaba fent una crida a <tt class="docutils literal"><span class="pre">GridShiftFile</span></tt>, classe provinent de <em>jGridShift</em>, que és la que efectua realment la transformació.</p>
+<p>Abans però observem que <tt class="docutils literal"><span class="pre">NTv2Transform</span></tt> no es crida directament, sinó a través de dues instàncies de <tt class="docutils literal"><span class="pre">ConcatenatedTransformDirect2D</span></tt>. Aquesta construcció, creada automàticament per GeoTools en el procés descrit en l&#8217;apartat anterior, adapta l&#8217;ordre dels eixos de coordenades, de manera que aquest particular sigui transparent per a l&#8217;usuari.</p>
+</div>
+</div>
+<div class="section" id="operacions-de-coordenades-personalitzades">
+<h2>Operacions de coordenades personalitzades<a class="headerlink" href="#operacions-de-coordenades-personalitzades" title="Link permanent a aquest títol">¶</a></h2>
+<p>Com hem vist, GeoTools utilitza la Base de Dades EPSG com a primera font de dades autoritativa per descobrir la millor transformació en cada cas.</p>
+<p>En ocasions, els usuaris disposen de transformacions pròpies, més precises o més actuals que les registrades a EPSG. O, simplement, desitgen poder controlar el procés al marge del mecanisme de descoberta automàtica que utilitza GeoTools, definint i forçant l&#8217;ús d&#8217;una transformació personalitzada.</p>
+<p>Com hem vist, GeoTools utilitza factories del tipus <tt class="docutils literal"><span class="pre">CoordinateOperationFactory</span></tt>, encarregades de construïr les operacions de coordenades. Per tal de modificar el comportament per defecte, hem introduït una nova <tt class="docutils literal"><span class="pre">CoordinateOperationFactoryUsingWKT</span></tt> amb una prioritat més alta que <tt class="docutils literal"><span class="pre">ThreadedEpsgHsqlFactory</span></tt>.</p>
+<p>D&#8217;aquesta manera, abans de consultar la BDD EPSG, es consultarà un fitxer amb definicions personalitzades. En cas de no existir aquest fitxer, la nova factoria no s&#8217;activarà. I, en cas de trobar el fitxer però no trobar en ell una definició personalitzada per a una operació determinada, <tt class="docutils literal"><span class="pre">CoordinateOperationFactoryUsingWKT</span></tt> incorpora un mecanisme intern, <tt class="docutils literal"><span class="pre">getFallbackAuthorityFactory()</span></tt>, que delegarà en la següent <tt class="docutils literal"><span class="pre">CoordinateOperationFactory</span></tt> per ordre de prioritat. És a dir, s&#8217;utilitzarà <tt class="docutils literal"><span class="pre">ThreadedEpsgHsqlFactory</span></tt>, que accedeix a la BDD EPSG oficial, com a mecanisme de <cite>fallback</cite>.</p>
+<p>S&#8217;ha proveït GeoTools d&#8217;aquesta nova factory, però se li ha assignat una prioritat baixa per defecte, de manera que restarà inactiva per defecte. Existeix un mecanisme senzill per registrar qualsevol factoria amb el nivell de prioritat desitjat, el que permet activar l&#8217;ús aquesta característica per codi sempre que sigui necessari.</p>
+<p>La localització del fitxer amb les definicions personalitzades es pot indicar mitjançant una variable d&#8217;entorn de la màquina java en temps d&#8217;execució, o bé es pot indicar per codi, o bé, si no es defineix, s&#8217;entendrà que es troba en algun lloc del classpath. El fitxer amb les definicions personalitzades porta per nom, per defecte, <tt class="file docutils literal"><span class="pre">epsg_operations.properties</span></tt>.</p>
+<div class="figure align-center">
+<a class="reference external image-reference" href="_images/GEOT-WKTOperation_Class.PNG"><img alt="_images/GEOT-WKTOperation_Class.PNG" src="_images/GEOT-WKTOperation_Class.PNG" /></a>
+<p class="caption">Classes rellevants per a la gestió d&#8217;operacions de coordenades personalitzades.</p>
+</div>
+<p>Al diagrama de classes s&#8217;observa que <tt class="docutils literal"><span class="pre">CoordinateOperationFactoryUsingWKT</span></tt> extén <tt class="docutils literal"><span class="pre">DeferredAuthorityFactory</span></tt> que al seu torn deriva de <tt class="docutils literal"><span class="pre">BufferedAuthorityFactory</span></tt>. Aquesta herència incorpora novament funcionalitats de caché per fer una gestió òptima de l&#8217;ús de memòria. Com en altres casos, la lectura d&#8217;una operació personalitzada en WKT es retarda fins que no sigui estrictament necessària, i posteriorment es manté en memòria amb un temporitzador que monitoritza el seu ús. Si passats 15 minuts una operació no s&#8217;ha tornat a utilitzar, s&#8217;allibera la memòria, i es tornarà a construïr la operació a partir del WKT quan torni a ser requerida. Això beneficia les situacions amb molta càrrega, on es manté en memòria només allò que s&#8217;està utilitzant repetidament en un moment donat.</p>
+<p>En realitat, <tt class="docutils literal"><span class="pre">CoordinateOperationFactoryUsingWKT</span></tt> només gestiona la localització del fitxer de definicions i els mecanismes de caché descrits. La classe que realment processa les definicions personalitzades per construïr les <tt class="docutils literal"><span class="pre">MathTransforms</span></tt> corresponents és la classe <tt class="docutils literal"><span class="pre">PropertyCoordinateOperationAuthorityFactory</span></tt>, que s&#8217;utilitza des de la classe de més alt nivell com a <em>backing factory</em>. D&#8217;aquesta manera, el processat de base queda desvinculat de la gestió dels recursos, donant lloc a una arquitectura més flexible.</p>
+<div class="section" id="operacions-personalitzades-sintaxi-i-exemples">
+<h3>Operacions personalitzades. Sintaxi i exemples<a class="headerlink" href="#operacions-personalitzades-sintaxi-i-exemples" title="Link permanent a aquest títol">¶</a></h3>
+<p>Cada línia al fitxer <tt class="file docutils literal"><span class="pre">epsg_operations.properties</span></tt> descriu una operació de coordenades, consistent en un <cite>CRS origen</cite>, un <cite>CRS destí</cite>, i una transformació matemàtica amb els seus corresponents valors de paràmetres. La sintaxi general és:</p>
+<div class="highlight-python"><pre>&lt;source crs code&gt;,&lt;target crs code&gt;=&lt;WKT math transform&gt;</pre>
+</div>
+<p>Les transformacions matemàtiques estan descrites en la sintaxi <a class="reference external" href="http://www.geoapi.org/3.0/javadoc/org/opengis/referencing/doc-files/WKT.html">Well-Known Text</a>. Els noms de paràmetres i rangs de valors vàlids es poden consultar a <a class="reference external" href="http://www.epsg-registry.org/">EPSG Geodetic Parameter Registry</a>.</p>
+<div class="section" id="exemples">
+<h4>Exemples<a class="headerlink" href="#exemples" title="Link permanent a aquest títol">¶</a></h4>
+<p>Declarant una malla NTv2 personalitzada:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="mi">4230</span><span class="p">,</span><span class="mi">4258</span><span class="o">=</span><span class="n">PARAM_MT</span><span class="p">[</span><span class="s">&quot;NTv2&quot;</span><span class="p">,</span> \
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;Latitude and longitude difference file&quot;</span><span class="p">,</span> <span class="s">&quot;100800401.gsb&quot;</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Transformació de semblança, operant directament entre dues projeccions UTM:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="mi">23031</span><span class="p">,</span><span class="mi">25831</span><span class="o">=</span><span class="n">PARAM_MT</span><span class="p">[</span><span class="s">&quot;Similarity transformation&quot;</span><span class="p">,</span> \
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;Ordinate 1 of evaluation point in target CRS&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">129.549</span><span class="p">],</span> \
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;Ordinate 2 of evaluation point in target CRS&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">208.185</span><span class="p">],</span> \
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;Scale difference&quot;</span><span class="p">,</span> <span class="mf">1.00000155</span><span class="p">],</span> \
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;Rotation angle of source coordinate reference system axes&quot;</span><span class="p">,</span> <span class="mf">1.56504</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Transformació geocèntrica, precedida per una conversió d&#8217;el·lipsoidals a geocèntriques, i posterior conversió de geocèntriques a el·lipsoidals. El resultat és una concatenació de tres transformacions:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="mi">4230</span><span class="p">,</span><span class="mi">4258</span><span class="o">=</span><span class="n">CONCAT_MT</span><span class="p">[</span><span class="n">PARAM_MT</span><span class="p">[</span><span class="s">&quot;Ellipsoid_To_Geocentric&quot;</span><span class="p">,</span> \
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;dim&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> \
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;semi_major&quot;</span><span class="p">,</span> <span class="mf">6378388.0</span><span class="p">],</span> \
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;semi_minor&quot;</span><span class="p">,</span> <span class="mf">6356911.9461279465</span><span class="p">]],</span> \
+<span class="n">PARAM_MT</span><span class="p">[</span><span class="s">&quot;Position Vector transformation (geog2D domain)&quot;</span><span class="p">,</span> \
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;dx&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">116.641</span><span class="p">],</span> \
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;dy&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">56.931</span><span class="p">],</span> \
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;dz&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">110.559</span><span class="p">],</span> \
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;ex&quot;</span><span class="p">,</span> <span class="mf">0.8925078166311858</span><span class="p">],</span> \
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;ey&quot;</span><span class="p">,</span> <span class="mf">0.9207660950870382</span><span class="p">],</span> \
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;ez&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.9166407989620964</span><span class="p">],</span> \
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;ppm&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.5200000000346066</span><span class="p">]],</span> \
+<span class="n">PARAM_MT</span><span class="p">[</span><span class="s">&quot;Geocentric_To_Ellipsoid&quot;</span><span class="p">,</span> \
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;dim&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> \
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;semi_major&quot;</span><span class="p">,</span> <span class="mf">6378137.0</span><span class="p">],</span> \
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;semi_minor&quot;</span><span class="p">,</span> <span class="mf">6356752.314140356</span><span class="p">]]</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>Cada operació pot ser descrita en una única línia, o es pot trencar en diverses línies per fer-la més llegible, afegint una barra inversa &#8220;\&#8221; al final de cada línia, el que indica la seva continuació. Vegeu els exemples anteriors.</p>
+</div>
+</div>
+<div class="section" id="instanciacio-de-factories">
+<h3>Instanciació de factories<a class="headerlink" href="#instanciacio-de-factories" title="Link permanent a aquest títol">¶</a></h3>
+<p>La manera d&#8217;invocar factories a GeoTools és a través d&#8217;unes classes anomenades <tt class="docutils literal"><span class="pre">FactoryFinders</span></tt>. Per al mòdul de referenciació, s&#8217;utilitza el <tt class="docutils literal"><span class="pre">ReferencingFactoryFinder</span></tt>. Per exemple, per recuperar la factoria encarregada de crear operacions de coordenades basades l&#8217;autoritat EPSG, es fa servir:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="n">ReferencingFactoryFinder</span><span class="o">.</span><span class="na">getCoordinateOperationAuthorityFactory</span><span class="o">(</span><span class="s">&quot;epsg&quot;</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</pre></div>
+</div>
+<p>Aquest <em>finder</em> recorrerà a un registre de factories que manté referències cap a totes les factories registrades al sistema. Per escollir la factoria, es filtra segons el seu tipus, i, en cas d&#8217;haver-n&#8217;hi més d&#8217;una, s&#8217;escull la que està registrada amb prioritat més alta.</p>
+<p>Un cop determinada, es delega la seva creació a <tt class="docutils literal"><span class="pre">FactoryCreator</span></tt> (que no és més que una factoria de factories). La primera seqüencia del diagrama mostra el moment en que <tt class="docutils literal"><span class="pre">FactoryCreator</span></tt> està recuperant la implementació de <tt class="docutils literal"><span class="pre">CoordinateOperationFactoryUsingWKT</span></tt>.</p>
+<div class="figure align-center">
+<a class="reference external image-reference" href="_images/GEOT-WKTOperation_Sequence.PNG"><img alt="_images/GEOT-WKTOperation_Sequence.PNG" src="_images/GEOT-WKTOperation_Sequence.PNG" /></a>
+<p class="caption">Instanciació d&#8217;una factoria d&#8217;operacions de coordenades, i d&#8217;una transformació matemàtica a partir de la seva definició en WKT.</p>
+</div>
+</div>
+<div class="section" id="instanciacio-d-una-transformacio-matematica-personalitzada">
+<h3>Instanciació d&#8217;una transformació matemàtica personalitzada<a class="headerlink" href="#instanciacio-d-una-transformacio-matematica-personalitzada" title="Link permanent a aquest títol">¶</a></h3>
+<p>A la segona seqüència de la figura es mostra com <tt class="docutils literal"><span class="pre">CoordinateOperationFactoryUsingWKT</span></tt> crea una operació de coordenades. Primer cercarà a la caché pròpia i, si no la troba, encarregarà la seva creacio a <tt class="docutils literal"><span class="pre">PropertyCoordinateOperationAuthorityFactory</span></tt>. Aquesta cercarà la definició al fitxer de <em>properties</em>, i llegirà la transformació matemàtica en format WKT. De la creació de la transformació matemàtica s&#8217;encarrega <tt class="docutils literal"><span class="pre">DefaultMathTransformFactory</span></tt> que té un mètode capaç de crear <tt class="docutils literal"><span class="pre">MathTransform</span></tt>  partir d&#8217;una cadena de text en WKT.</p>
+</div>
+</div>
+<div class="section" id="javadoc">
+<h2>Javadoc<a class="headerlink" href="#javadoc" title="Link permanent a aquest títol">¶</a></h2>
+<p>A continuació es proporciona una traducció al català de la documentació de codi <em>Javadoc</em> per a les classes aportades a GeoTools.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="javadoc/SimilarityTransformProvider.html">SimilarityTransformProvider</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="javadoc/SimilarityTransformProvider.html#atributs">Atributs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/SimilarityTransformProvider.html#translation-1">TRANSLATION_1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/SimilarityTransformProvider.html#translation-2">TRANSLATION_2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/SimilarityTransformProvider.html#scale">SCALE</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/SimilarityTransformProvider.html#rotation">ROTATION</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="javadoc/SimilarityTransformProvider.html#constructors">Constructors</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/SimilarityTransformProvider.html#id1">SimilarityTransformProvider</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="javadoc/SimilarityTransformProvider.html#metodes">Mètodes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/SimilarityTransformProvider.html#createmathtransform">createMathTransform</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="javadoc/NTv2Transform.html">NTv2Transform</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="javadoc/NTv2Transform.html#atributs">Atributs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2Transform.html#logger">LOGGER</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="javadoc/NTv2Transform.html#constructor">Constructor</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2Transform.html#id1">NTv2Transform</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="javadoc/NTv2Transform.html#metodes">Mètodes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2Transform.html#hashcode">hashCode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2Transform.html#equals">equals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2Transform.html#inverse">inverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2Transform.html#transform">transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2Transform.html#inversetransform">inverseTransform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2Transform.html#getsourcedimensions">getSourceDimensions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2Transform.html#gettargetdimensions">getTargetDimensions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2Transform.html#getparametervalues">getParameterValues</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="javadoc/NTv2Transform.Provider.html">NTv2Transform.Provider</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="javadoc/NTv2Transform.Provider.html#atributs">Atributs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2Transform.Provider.html#file">FILE</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="javadoc/NTv2Transform.Provider.html#constructor">Constructor</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2Transform.Provider.html#id1">NTv2Transform.Provider</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="javadoc/NTv2Transform.Provider.html#metodes">Mètodes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2Transform.Provider.html#getoperationtype">getOperationType</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2Transform.Provider.html#createmathtransform">createMathTransform</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="javadoc/NTv2GridShiftFactory.html">NTv2GridShiftFactory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="javadoc/NTv2GridShiftFactory.html#atributs">Atributs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2GridShiftFactory.html#logger">LOGGER</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="javadoc/NTv2GridShiftFactory.html#constructors">Constructors</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2GridShiftFactory.html#id1">NTv2GridShiftFactory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2GridShiftFactory.html#id2">NTv2GridShiftFactory</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="javadoc/NTv2GridShiftFactory.html#metodes">Mètodes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2GridShiftFactory.html#isntv2grid">isNTv2Grid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2GridShiftFactory.html#createntv2grid">createNTv2Grid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/NTv2GridShiftFactory.html#isntv2gridfilevalid">isNTv2GridFileValid</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="javadoc/GridShiftLocator.html">GridShiftLocator</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="javadoc/GridShiftLocator.html#metode">Mètode</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/GridShiftLocator.html#locategrid">locateGrid</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="javadoc/ClasspathGridShiftLocator.html">ClasspathGridShiftLocator</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="javadoc/ClasspathGridShiftLocator.html#constructor">Constructor</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/ClasspathGridShiftLocator.html#id1">ClasspathGridShiftLocator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="javadoc/ClasspathGridShiftLocator.html#metodes">Mètodes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/ClasspathGridShiftLocator.html#getvendor">getVendor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/ClasspathGridShiftLocator.html#locategrid">locateGrid</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="javadoc/PropertyCoordinateOperationAuthorityFactory.html">PropertyCoordinateOperationAuthorityFactory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="javadoc/PropertyCoordinateOperationAuthorityFactory.html#constructor">Constructor</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/PropertyCoordinateOperationAuthorityFactory.html#id1">PropertyCoordinateOperationAuthorityFactory</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="javadoc/PropertyCoordinateOperationAuthorityFactory.html#metodes">Mètodes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/PropertyCoordinateOperationAuthorityFactory.html#createcoordinateoperation">createCoordinateOperation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/PropertyCoordinateOperationAuthorityFactory.html#createfromcoordinatereferencesystemcodes">createFromCoordinateReferenceSystemCodes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/PropertyCoordinateOperationAuthorityFactory.html#getauthoritycodes">getAuthorityCodes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/PropertyCoordinateOperationAuthorityFactory.html#getdescriptiontext">getDescriptionText</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/PropertyCoordinateOperationAuthorityFactory.html#getauthority">getAuthority</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="javadoc/CoordinateOperationFactoryUsingWKT.html">CoordinateOperationFactoryUsingWKT</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="javadoc/CoordinateOperationFactoryUsingWKT.html#atributs">Atributs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/CoordinateOperationFactoryUsingWKT.html#authority">authority</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/CoordinateOperationFactoryUsingWKT.html#filename">FILENAME</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/CoordinateOperationFactoryUsingWKT.html#priority">PRIORITY</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/CoordinateOperationFactoryUsingWKT.html#factories">factories</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/CoordinateOperationFactoryUsingWKT.html#directory">directory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/CoordinateOperationFactoryUsingWKT.html#fallbackauthorityfactory">fallbackAuthorityFactory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/CoordinateOperationFactoryUsingWKT.html#fallbackauthorityfactorysearched">fallbackAuthorityFactorySearched</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="javadoc/CoordinateOperationFactoryUsingWKT.html#constructors">Constructors</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/CoordinateOperationFactoryUsingWKT.html#id1">CoordinateOperationFactoryUsingWKT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/CoordinateOperationFactoryUsingWKT.html#id2">CoordinateOperationFactoryUsingWKT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/CoordinateOperationFactoryUsingWKT.html#id3">CoordinateOperationFactoryUsingWKT</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="javadoc/CoordinateOperationFactoryUsingWKT.html#metodes">Mètodes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/CoordinateOperationFactoryUsingWKT.html#getauthority">getAuthority</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/CoordinateOperationFactoryUsingWKT.html#createbackingstore">createBackingStore</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/CoordinateOperationFactoryUsingWKT.html#getdefinitionsurl">getDefinitionsURL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/CoordinateOperationFactoryUsingWKT.html#createfromcoordinatereferencesystemcodes">createFromCoordinateReferenceSystemCodes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/CoordinateOperationFactoryUsingWKT.html#createcoordinateoperation">createCoordinateOperation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="javadoc/CoordinateOperationFactoryUsingWKT.html#getfallbackauthorityfactory">getFallbackAuthorityFactory</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Taula de Contingut</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Desenvolupament a GeoTools</a><ul>
+<li><a class="reference internal" href="#transformacio-de-semblanca">Transformació de semblança</a><ul>
+<li><a class="reference internal" href="#determinacio-i-instanciacio-d-una-transformacio">Determinació i instanciació d&#8217;una transformació</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#transformacions-de-malla">Transformacions de malla</a><ul>
+<li><a class="reference internal" href="#invocacio-d-una-transformacio-de-coordenades">Invocació d&#8217;una transformació de coordenades</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#operacions-de-coordenades-personalitzades">Operacions de coordenades personalitzades</a><ul>
+<li><a class="reference internal" href="#operacions-personalitzades-sintaxi-i-exemples">Operacions personalitzades. Sintaxi i exemples</a><ul>
+<li><a class="reference internal" href="#exemples">Exemples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#instanciacio-de-factories">Instanciació de factories</a></li>
+<li><a class="reference internal" href="#instanciacio-d-una-transformacio-matematica-personalitzada">Instanciació d&#8217;una transformació matemàtica personalitzada</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#javadoc">Javadoc</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Tema anterior</h4>
+  <p class="topless"><a href="intro.html"
+                        title="capítol anterior">Introducció</a></p>
+  <h4>Tema següent</h4>
+  <p class="topless"><a href="javadoc/SimilarityTransformProvider.html"
+                        title="capítol següent">SimilarityTransformProvider</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Cerca ràpida</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Ves a" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Entra paraules de cerca o el nom d'un mòdul, classe o funció.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navegació</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="javadoc/SimilarityTransformProvider.html" title="SimilarityTransformProvider"
+             >següent</a></li>
+        <li class="right" >
+          <a href="intro.html" title="Introducció"
+             >anterior</a> |</li>
+        <li><a href="index.html">Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Oscar Fonts.
+      Creat amb <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

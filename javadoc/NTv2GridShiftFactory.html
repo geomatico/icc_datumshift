@@ -1,0 +1,215 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>NTv2GridShiftFactory &mdash; Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="top" title="Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation" href="../index.html" />
+    <link rel="up" title="Desenvolupament a GeoTools" href="../geotools.html" />
+    <link rel="next" title="GridShiftLocator" href="GridShiftLocator.html" />
+    <link rel="prev" title="NTv2Transform.Provider" href="NTv2Transform.Provider.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navegació</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="GridShiftLocator.html" title="GridShiftLocator"
+             accesskey="N">següent</a></li>
+        <li class="right" >
+          <a href="NTv2Transform.Provider.html" title="NTv2Transform.Provider"
+             accesskey="P">anterior</a> |</li>
+        <li><a href="../index.html">Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</a> &raquo;</li>
+          <li><a href="../geotools.html" accesskey="U">Desenvolupament a GeoTools</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="ntv2gridshiftfactory">
+<h1>NTv2GridShiftFactory<a class="headerlink" href="#ntv2gridshiftfactory" title="Link permanent a aquest títol">¶</a></h1>
+<div class="highlight-java"><div class="highlight"><pre><span class="kn">package</span> <span class="n">org</span><span class="o">.</span><span class="na">geotools</span><span class="o">.</span><span class="na">referencing</span><span class="o">.</span><span class="na">factory</span><span class="o">.</span><span class="na">gridshift</span>
+</pre></div>
+</div>
+<p>Herència:</p>
+<div class="highlight-python"><pre>Object
+  AbstractFactory
+      ReferencingFactory
+          NTv2GridShiftFactory</pre>
+</div>
+<p>Signatura:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NTv2GridShiftFactory</span> <span class="kd">extends</span> <span class="n">ReferencingFactory</span>
+    <span class="kd">implements</span> <span class="n">BufferedFactory</span>
+</pre></div>
+</div>
+<p>Descripció:</p>
+<p>Carrega malles NTv2. Com que la càrrega és un procés costós en temps i memòria, utilitza un mecanisme de <cite>caché</cite> flexible, per mantenir les malles carregades en memòria mentre sigui possible. També comprova la integritar del fitxer NTv2 sense haver de procedir a una càrrega completa de la malla, al mètode <a class="reference internal" href="#isntv2grid">isNTv2Grid</a>.</p>
+<p>Autor:</p>
+<p>Oscar Fonts</p>
+<div class="section" id="atributs">
+<h2>Atributs<a class="headerlink" href="#atributs" title="Link permanent a aquest títol">¶</a></h2>
+<div class="section" id="logger">
+<h3>LOGGER<a class="headerlink" href="#logger" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">protected</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Logger</span> <span class="n">LOGGER</span>
+</pre></div>
+</div>
+<p>Logger.</p>
+</div>
+</div>
+<div class="section" id="constructors">
+<h2>Constructors<a class="headerlink" href="#constructors" title="Link permanent a aquest títol">¶</a></h2>
+<div class="section" id="id1">
+<h3>NTv2GridShiftFactory<a class="headerlink" href="#id1" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="nf">NTv2GridShiftFactory</span><span class="o">()</span>
+</pre></div>
+</div>
+<p>Instancia la factoria amb la prioritat per defecte.</p>
+</div>
+<div class="section" id="id2">
+<h3>NTv2GridShiftFactory<a class="headerlink" href="#id2" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><pre>public NTv2GridShiftFactory(int priority)</pre>
+</div>
+<p>Instancia la factoria amb la prioritat donada.</p>
+<p>Paràmetres:</p>
+<blockquote>
+<div><tt class="docutils literal"><span class="pre">priority</span></tt> - La prioritat de la factoria, amb un número entre <tt class="docutils literal"><span class="pre">MINIMUM_PRIORITY</span></tt> i <tt class="docutils literal"><span class="pre">MAXIMUM_PRIORITY</span></tt>.</div></blockquote>
+</div>
+</div>
+<div class="section" id="metodes">
+<h2>Mètodes<a class="headerlink" href="#metodes" title="Link permanent a aquest títol">¶</a></h2>
+<div class="section" id="isntv2grid">
+<h3>isNTv2Grid<a class="headerlink" href="#isntv2grid" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><pre>public boolean isNTv2Grid(URL location)</pre>
+</div>
+<p>Localitza el fitxer de malla, i comprova la seva integritat sense procedir a una càrrega de la malla.</p>
+<p>Paràmetres:</p>
+<p><tt class="docutils literal"><span class="pre">name</span></tt> - The NTv2 grid file name</p>
+<p>Retorn:</p>
+<p><tt class="docutils literal"><span class="pre">true</span></tt> si el fitxer existeix i és vàlid, <tt class="docutils literal"><span class="pre">false</span></tt> altrament.</p>
+</div>
+<div class="section" id="createntv2grid">
+<h3>createNTv2Grid<a class="headerlink" href="#createntv2grid" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><pre>public GridShiftFile createNTv2Grid(URL gridLocation) throws FactoryException</pre>
+</div>
+<p>Crea una malla NTv2 en memòria. Si la malla ja ha estat carregada anteriorment, es retorna la instància mantinguda en <cite>caché</cite>.</p>
+<p>Paràmetres:</p>
+<p><tt class="docutils literal"><span class="pre">gridLocation</span></tt> - El nom del fitxer.</p>
+<p>Retorn:</p>
+<p>Una estructura de dades amb la malla.</p>
+<p>Llença:</p>
+<p><tt class="docutils literal"><span class="pre">FactoryException</span></tt> - si la malla no s&#8217;ha pogut crear.</p>
+</div>
+<div class="section" id="isntv2gridfilevalid">
+<h3>isNTv2GridFileValid<a class="headerlink" href="#isntv2gridfilevalid" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><pre>protected boolean isNTv2GridFileValid(URL url)</pre>
+</div>
+<p>Comprova si el recurs és un fitxer NTv2 vàlid sense carregar-lo completament en memòria. Si el fitxer no és vàlid, la causa de l&#8217;error es registra com un <a class="reference external" href="http://java.sun.com/j2se/1.5/docs/api/java/util/logging/Level.html?is-external=true#WARNING">warning</a>.</p>
+<p>Paràmetres:</p>
+<p><tt class="docutils literal"><span class="pre">location</span></tt> - El <cite>path</cite> absolut al fitxer NTv2.</p>
+<p>Retorn:</p>
+<p><cite>true</cite> si el fitxer té un format NTv2 vàlid, <cite>false</cite> altrament.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Taula de Contingut</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">NTv2GridShiftFactory</a><ul>
+<li><a class="reference internal" href="#atributs">Atributs</a><ul>
+<li><a class="reference internal" href="#logger">LOGGER</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#constructors">Constructors</a><ul>
+<li><a class="reference internal" href="#id1">NTv2GridShiftFactory</a></li>
+<li><a class="reference internal" href="#id2">NTv2GridShiftFactory</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#metodes">Mètodes</a><ul>
+<li><a class="reference internal" href="#isntv2grid">isNTv2Grid</a></li>
+<li><a class="reference internal" href="#createntv2grid">createNTv2Grid</a></li>
+<li><a class="reference internal" href="#isntv2gridfilevalid">isNTv2GridFileValid</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Tema anterior</h4>
+  <p class="topless"><a href="NTv2Transform.Provider.html"
+                        title="capítol anterior">NTv2Transform.Provider</a></p>
+  <h4>Tema següent</h4>
+  <p class="topless"><a href="GridShiftLocator.html"
+                        title="capítol següent">GridShiftLocator</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Cerca ràpida</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Ves a" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Entra paraules de cerca o el nom d'un mòdul, classe o funció.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navegació</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="GridShiftLocator.html" title="GridShiftLocator"
+             >següent</a></li>
+        <li class="right" >
+          <a href="NTv2Transform.Provider.html" title="NTv2Transform.Provider"
+             >anterior</a> |</li>
+        <li><a href="../index.html">Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</a> &raquo;</li>
+          <li><a href="../geotools.html" >Desenvolupament a GeoTools</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Oscar Fonts.
+      Creat amb <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

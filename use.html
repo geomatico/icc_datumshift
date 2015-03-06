@@ -1,0 +1,165 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Guia ràpida de configuració a GeoServer &mdash; Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="top" title="Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation" href="index.html" />
+    <link rel="next" title="Agraïments" href="thanks.html" />
+    <link rel="prev" title="Conjunt de proves realitzades" href="tests.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navegació</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="thanks.html" title="Agraïments"
+             accesskey="N">següent</a></li>
+        <li class="right" >
+          <a href="tests.html" title="Conjunt de proves realitzades"
+             accesskey="P">anterior</a> |</li>
+        <li><a href="index.html">Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="guia-rapida-de-configuracio-a-geoserver">
+<h1>Guia ràpida de configuració a GeoServer<a class="headerlink" href="#guia-rapida-de-configuracio-a-geoserver" title="Link permanent a aquest títol">¶</a></h1>
+<p>Instruccions per a la incorporació dels fitxers de malla NTv2 i forçar l&#8217;ús de la transformació de semblança oficial de l&#8217;ICC a GeoServer 2.2.</p>
+<ol class="arabic simple">
+<li>Localitzeu el <strong>Directori de dades</strong> (<tt class="docutils literal"><span class="pre">GEOSERVER_DATA_DIR</span></tt>) a la vostra instal·lació de GeoServer. El podeu consultar a la interfície web d&#8217;administrador, sota <strong>Servidor</strong>, <em>Estat del servidor</em>:</li>
+</ol>
+<div class="figure align-center">
+<img alt="_images/geoserver_data_dir.png" src="_images/geoserver_data_dir.png" />
+</div>
+<ol class="arabic" start="2">
+<li><p class="first">Descarregueu-vos la <a class="reference external" href="http://www.icc.cat/cat/Home-ICC/Geodesia/Recursos">Malla NTv2 de transformació entre ED50 i ETRS89</a> i descomprimiu el seu contingut. Copieu els fitxers <tt class="file docutils literal"><span class="pre">100800401.gsb</span></tt> i <tt class="file docutils literal"><span class="pre">800100401.gsb</span></tt> dins <tt class="file docutils literal"><span class="pre">GEOSERVER_DATA_DIR/user_projections</span></tt>.</p>
+</li>
+<li><p class="first">Editeu el fitxer <tt class="file docutils literal"><span class="pre">GEOSERVER_DATA_DIR/user_projections/epsg_operations.properties</span></tt> amb un editor de text. Si no existeix aquest fitxer, creeu-lo. Copieu el següent contingut dins el fitxer:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="mi">4230</span><span class="p">,</span><span class="mi">4258</span><span class="o">=</span><span class="n">PARAM_MT</span><span class="p">[</span><span class="s">&quot;NTv2&quot;</span><span class="p">,</span> \
+<span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;Latitude and longitude difference file&quot;</span><span class="p">,</span> <span class="s">&quot;100800401.gsb&quot;</span><span class="p">]]</span>
+<span class="mi">4258</span><span class="p">,</span><span class="mi">4230</span><span class="o">=</span><span class="n">PARAM_MT</span><span class="p">[</span><span class="s">&quot;NTv2&quot;</span><span class="p">,</span> \
+<span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;Latitude and longitude difference file&quot;</span><span class="p">,</span> <span class="s">&quot;800100401.gsb&quot;</span><span class="p">]]</span>
+<span class="mi">23031</span><span class="p">,</span><span class="mi">25831</span><span class="o">=</span><span class="n">PARAM_MT</span><span class="p">[</span><span class="s">&quot;Similarity transformation&quot;</span><span class="p">,</span> \
+<span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;Ordinate 1 of evaluation point in target CRS&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">129.549</span><span class="p">],</span> \
+<span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;Ordinate 2 of evaluation point in target CRS&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">208.185</span><span class="p">],</span> \
+<span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;Scale difference&quot;</span><span class="p">,</span> <span class="mf">1.0000015504</span><span class="p">],</span> \
+<span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;Rotation angle of source coordinate reference system axes&quot;</span><span class="p">,</span> <span class="mf">1.56504</span><span class="p">]]</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Reinicieu GeoServer (o el contenidor d&#8217;aplicacions web en què estigui desplegat, com ara <em>tomcat</em>).</p>
+</li>
+<li><p class="first">Per comprovar les noves definicions, aneu a la <em>Reprojection console</em> (a la interfície web, sota <strong>Demos</strong>), i cliqueu a <em>Show transformation details</em> per als següents parells de CRS:</p>
+</li>
+</ol>
+<blockquote>
+<div><ul>
+<li><p class="first"><em>Source CRS</em> <strong>EPSG:4230</strong> i <em>Target CRS</em> <strong>EPSG:4258</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">PARAM_MT</span><span class="p">[</span><span class="s">&quot;NTv2&quot;</span><span class="p">,</span>
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;Latitude and longitude difference file&quot;</span><span class="p">,</span> <span class="s">&quot;100800401.gsb&quot;</span><span class="p">]]</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first"><em>Source CRS</em> <strong>EPSG:4258</strong> i <em>Target CRS</em> <strong>EPSG:4230</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">PARAM_MT</span><span class="p">[</span><span class="s">&quot;NTv2&quot;</span><span class="p">,</span>
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;Latitude and longitude difference file&quot;</span><span class="p">,</span> <span class="s">&quot;800100401.gsb&quot;</span><span class="p">]]</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first"><em>Source CRS</em> <strong>EPSG:23031</strong> i <em>Target CRS</em> <strong>EPSG:25831</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">PARAM_MT</span><span class="p">[</span><span class="s">&quot;Affine&quot;</span><span class="p">,</span>
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;num_row&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;num_col&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;elt_0_0&quot;</span><span class="p">,</span> <span class="mf">1.0000015503712145</span><span class="p">],</span>
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;elt_0_1&quot;</span><span class="p">,</span> <span class="mf">0.00000758753979846734</span><span class="p">],</span>
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;elt_0_2&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">129.549</span><span class="p">],</span>
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;elt_1_0&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00000758753979846734</span><span class="p">],</span>
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;elt_1_1&quot;</span><span class="p">,</span> <span class="mf">1.0000015503712145</span><span class="p">],</span>
+  <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;elt_1_2&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">208.185</span><span class="p">]]</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Tema anterior</h4>
+  <p class="topless"><a href="tests.html"
+                        title="capítol anterior">Conjunt de proves realitzades</a></p>
+  <h4>Tema següent</h4>
+  <p class="topless"><a href="thanks.html"
+                        title="capítol següent">Agraïments</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Cerca ràpida</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Ves a" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Entra paraules de cerca o el nom d'un mòdul, classe o funció.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navegació</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="thanks.html" title="Agraïments"
+             >següent</a></li>
+        <li class="right" >
+          <a href="tests.html" title="Conjunt de proves realitzades"
+             >anterior</a> |</li>
+        <li><a href="index.html">Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Oscar Fonts.
+      Creat amb <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

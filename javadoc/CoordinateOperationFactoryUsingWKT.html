@@ -1,0 +1,379 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>CoordinateOperationFactoryUsingWKT &mdash; Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="top" title="Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation" href="../index.html" />
+    <link rel="up" title="Desenvolupament a GeoTools" href="../geotools.html" />
+    <link rel="next" title="Desenvolupament a GeoServer" href="../geoserver.html" />
+    <link rel="prev" title="PropertyCoordinateOperationAuthorityFactory" href="PropertyCoordinateOperationAuthorityFactory.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navegació</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../geoserver.html" title="Desenvolupament a GeoServer"
+             accesskey="N">següent</a></li>
+        <li class="right" >
+          <a href="PropertyCoordinateOperationAuthorityFactory.html" title="PropertyCoordinateOperationAuthorityFactory"
+             accesskey="P">anterior</a> |</li>
+        <li><a href="../index.html">Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</a> &raquo;</li>
+          <li><a href="../geotools.html" accesskey="U">Desenvolupament a GeoTools</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="coordinateoperationfactoryusingwkt">
+<h1>CoordinateOperationFactoryUsingWKT<a class="headerlink" href="#coordinateoperationfactoryusingwkt" title="Link permanent a aquest títol">¶</a></h1>
+<div class="highlight-java"><div class="highlight"><pre><span class="kn">package</span> <span class="n">org</span><span class="o">.</span><span class="na">geotools</span><span class="o">.</span><span class="na">referencing</span><span class="o">.</span><span class="na">factory</span><span class="o">.</span><span class="na">epsg</span>
+</pre></div>
+</div>
+<p>Herència:</p>
+<div class="highlight-python"><pre>Object
+  AbstractFactory
+      ReferencingFactory
+          AbstractAuthorityFactory
+              BufferedAuthorityFactory
+                  DeferredAuthorityFactory
+                      CoordinateOperationFactoryUsingWKT</pre>
+</div>
+<p>Signatura:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CoordinateOperationFactoryUsingWKT</span>
+        <span class="kd">extends</span> <span class="n">DeferredAuthorityFactory</span>
+        <span class="kd">implements</span> <span class="n">CoordinateOperationAuthorityFactory</span>
+</pre></div>
+</div>
+<p>Descripció:</p>
+<p>Factoria que gestiona operacions de coordenades definides per l&#8217;usuari.</p>
+<p>Aquesta factoria es pot utilitzar per proveïr operacions de coordenades quan
+no hi ha accés a una base de dades EPSG completa.</p>
+<p>O, assignant-hi una prioritat més alta, es pot utilitzar per
+redefinir o ampliar les operacions de coordenades existents a EPSG.</p>
+<p>Les operacions de coordenades es defineixen com una MathTransform definida
+en Well Known Test (vegeu detalls i exemples a <tt class="docutils literal"><span class="pre">PropertyCoordinateOperationAuthorityFactory</span></tt>).</p>
+<p>El fitxer de propietats portarà el nom <tt class="file docutils literal"><span class="pre">epsg_operations.properties</span></tt>, i les
+seves possibles localitzacions es descriuen a <a class="reference internal" href="#filename">FILENAME</a>.</p>
+<p>Si no es troba cap fitxer de propietats, aquesta factoria no s&#8217;activarà.</p>
+<p>Si no es troba una operació al fitxer de propietats, aquesta factoria delegarà
+la creació a una factoria alternativa. La factoria alternativa utilitzada serà
+la factoria de tipus <tt class="docutils literal"><span class="pre">CoordinateOperationAuthorityFactory</span></tt> per a l&#8217;autoritat <em>EPSG</em>
+que es trobi a continuació d&#8217;aquesta en l&#8217;ordre de prioritats.</p>
+<dl class="docutils">
+<dt>Autor:</dt>
+<dd>Oscar Fonts</dd>
+</dl>
+<div class="section" id="atributs">
+<h2>Atributs<a class="headerlink" href="#atributs" title="Link permanent a aquest títol">¶</a></h2>
+<div class="section" id="authority">
+<h3>authority<a class="headerlink" href="#authority" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">protected</span> <span class="n">Citation</span> <span class="n">authority</span>
+</pre></div>
+</div>
+<p>L&#8217;autoritat. Només es crearà quan es necessiti per primera vegada.</p>
+<p>Vegeu també:</p>
+<p><a class="reference internal" href="#getauthority">getAuthority</a>.</p>
+</div>
+<div class="section" id="filename">
+<h3>FILENAME<a class="headerlink" href="#filename" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">FILENAME</span>
+</pre></div>
+</div>
+<p>El fitxer de definicions per defecte.</p>
+<p>Aquesta implementació cercarà aquest fitxer en els llocs següents:</p>
+<ul>
+<li><dl class="first docutils">
+<dt>Al directori especificat per la propietat de sistema</dt>
+<dd><p class="first last"><cite>org.geotools.referencing.crs-directory</cite>.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">Als directoris <tt class="file docutils literal"><span class="pre">org/geotools/referencing/factory/espg</span></tt> dintre del <em>classpath</em>.</p>
+</li>
+</ul>
+<p>Vegeu també:</p>
+<p><a class="reference internal" href="#getdefinitionsurl">getDefinitionsURL</a>,</p>
+</div>
+<div class="section" id="priority">
+<h3>PRIORITY<a class="headerlink" href="#priority" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">PRIORITY</span>
+</pre></div>
+</div>
+<p>Prioritat per aquesta factoria</p>
+</div>
+<div class="section" id="factories">
+<h3>factories<a class="headerlink" href="#factories" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">protected</span> <span class="kd">final</span> <span class="n">ReferencingFactoryContainer</span> <span class="n">factories</span>
+</pre></div>
+</div>
+<p>Les factories que es passaràn al <em>backing store</em>.</p>
+</div>
+<div class="section" id="directory">
+<h3>directory<a class="headerlink" href="#directory" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">protected</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">directory</span>
+</pre></div>
+</div>
+<p>Directori on es cercaràn les definicions extra.</p>
+</div>
+<div class="section" id="fallbackauthorityfactory">
+<h3>fallbackAuthorityFactory<a class="headerlink" href="#fallbackauthorityfactory" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">protected</span> <span class="n">CoordinateOperationAuthorityFactory</span> <span class="n">fallbackAuthorityFactory</span>
+</pre></div>
+</div>
+<p>Una factoria alternativa a utilitzar quan la primària no trobi una operació.</p>
+</div>
+<div class="section" id="fallbackauthorityfactorysearched">
+<h3>fallbackAuthorityFactorySearched<a class="headerlink" href="#fallbackauthorityfactorysearched" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">protected</span> <span class="kt">boolean</span> <span class="n">fallbackAuthorityFactorySearched</span>
+</pre></div>
+</div>
+<p>Un indicador per cercar aquesta factoria només un cop.</p>
+</div>
+</div>
+<div class="section" id="constructors">
+<h2>Constructors<a class="headerlink" href="#constructors" title="Link permanent a aquest títol">¶</a></h2>
+<div class="section" id="id1">
+<h3>CoordinateOperationFactoryUsingWKT<a class="headerlink" href="#id1" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="nf">CoordinateOperationFactoryUsingWKT</span><span class="o">()</span>
+</pre></div>
+</div>
+<p>Constructor utilitzant les factories subjacents per defecte.</p>
+</div>
+<div class="section" id="id2">
+<h3>CoordinateOperationFactoryUsingWKT<a class="headerlink" href="#id2" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><pre>public CoordinateOperationFactoryUsingWKT(Hints userHints)</pre>
+</div>
+<p>Constructor utilitzant les factories subjacent creades a partir dels hints especificats.</p>
+</div>
+<div class="section" id="id3">
+<h3>CoordinateOperationFactoryUsingWKT<a class="headerlink" href="#id3" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><pre>protected CoordinateOperationFactoryUsingWKT(Hints userHints,
+                                             int priority)</pre>
+</div>
+<p>Constructor utilitzant els hints especifiats i la prioritat especificada.</p>
+</div>
+</div>
+<div class="section" id="metodes">
+<h2>Mètodes<a class="headerlink" href="#metodes" title="Link permanent a aquest títol">¶</a></h2>
+<div class="section" id="getauthority">
+<h3>getAuthority<a class="headerlink" href="#getauthority" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="n">Citation</span> <span class="nf">getAuthority</span><span class="o">()</span>
+</pre></div>
+</div>
+<p>Retorna la organització o agent responsable de la definició i manteniment de la base de dades subjacent.</p>
+<p>Especificat a:</p>
+<p><tt class="docutils literal"><span class="pre">getAuthority</span></tt> a la interfície <tt class="docutils literal"><span class="pre">AuthorityFactory</span></tt></p>
+<p>Sobreescriu:</p>
+<p><tt class="docutils literal"><span class="pre">getAuthority</span></tt> a la classe <tt class="docutils literal"><span class="pre">BufferedAuthorityFactory</span></tt></p>
+</div>
+<div class="section" id="createbackingstore">
+<h3>createBackingStore<a class="headerlink" href="#createbackingstore" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">protected</span> <span class="n">AbstractAuthorityFactory</span> <span class="nf">createBackingStore</span><span class="o">()</span>
+                                               <span class="kd">throws</span> <span class="n">FactoryException</span>
+</pre></div>
+</div>
+<p>Crea la <em>backing store</em>.</p>
+<p>Especificat a:</p>
+<p><tt class="docutils literal"><span class="pre">createBackingStore</span></tt> a la classe <tt class="docutils literal"><span class="pre">DeferredAuthorityFactory</span></tt></p>
+<p>Retorna:</p>
+<p>La <em>backing store</em> que s&#8217;utilitzarà als mètodes <tt class="docutils literal"><span class="pre">createXXX(...)</span></tt>.</p>
+<p>Llença:</p>
+<p><tt class="docutils literal"><span class="pre">FactoryNotFoundException</span></tt> - si el fitxer de <tt class="docutils literal"><span class="pre">properties</span></tt> no s&#8217;ha trobat.</p>
+<p><tt class="docutils literal"><span class="pre">FactoryException</span></tt> - Si el constructor no ha aconseguit trobar o llegir
+el fitxer. Aquesta excepcio generalment està causada per una
+<tt class="docutils literal"><span class="pre">IOException</span></tt>.</p>
+</div>
+<div class="section" id="getdefinitionsurl">
+<h3>getDefinitionsURL<a class="headerlink" href="#getdefinitionsurl" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">protected</span> <span class="n">URL</span> <span class="nf">getDefinitionsURL</span><span class="o">()</span>
+</pre></div>
+</div>
+<p>Retorna la URL apuntant al fitxer de propietats que conté les definicions de les operacions.
+Aquesta implementació realitza la cerca del fitxer de la següent manera:</p>
+<ul class="simple">
+<li>Si s&#8217;ha informat la propietat de sistema <cite>org.geotools.referencing.crs-directory</cite>,
+es cercarà el <tt class="file docutils literal"><span class="pre">epsg_operations.properties</span></tt> en aquest directori.</li>
+<li>Si no s&#8217;ha indicat la propietat mencionada, o si no es troba el fitxer de
+propietats en aquella localització, llavors s&#8217;utilitzarà el primer fitxer
+anomenat <tt class="file docutils literal"><span class="pre">epsg_operations.properties</span></tt> dins de
+<tt class="file docutils literal"><span class="pre">org/geotools/referencing/factory/epsg</span></tt> al <em>classpath</em>.</li>
+<li>Si tampoc es troba aquest fitxer al <em>classpath</em>, es deshabilitarà aquesta factoria.</li>
+</ul>
+<p>Retorna:</p>
+<p>La URL, o <tt class="docutils literal"><span class="pre">null</span></tt> si no s&#8217;ha trobat.</p>
+</div>
+<div class="section" id="createfromcoordinatereferencesystemcodes">
+<h3>createFromCoordinateReferenceSystemCodes<a class="headerlink" href="#createfromcoordinatereferencesystemcodes" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><pre>public Set&lt;CoordinateOperation&gt; createFromCoordinateReferenceSystemCodes(
+            String sourceCRS, String targetCRS)
+                throws NoSuchAuthorityCodeException, FactoryException</pre>
+</div>
+<p>Crea operacions a partir dels sistemes de referència de coordenades donats.
+Aquest mètode cerca al fitxer de propietats <a class="reference internal" href="#filename">FILENAME</a>.</p>
+<p>Si no es troba la operació, s&#8217;utilitzarà una factoria alternativa mitjançant
+<a class="reference internal" href="#getfallbackauthorityfactory">getFallbackAuthorityFactory</a>.</p>
+<p>Especificat a</p>
+<p><tt class="docutils literal"><span class="pre">createFromCoordinateReferenceSystemCodes</span></tt>
+a la interfície
+<tt class="docutils literal"><span class="pre">CoordinateOperationAuthorityFactory</span></tt></p>
+<p>Sobreescriu:</p>
+<p><tt class="docutils literal"><span class="pre">createFromCoordinateReferenceSystemCodes</span></tt> a la classe <tt class="docutils literal"><span class="pre">BufferedAuthorityFactory</span></tt></p>
+<p>Paràmetres:</p>
+<p><tt class="docutils literal"><span class="pre">sourceCRS</span></tt> - Identificador del sistema de referència de coordenades d&#8217;origen.</p>
+<p><tt class="docutils literal"><span class="pre">targetCRS</span></tt> - Identificador del sistema de referència de coordenades destí.</p>
+<p>Retorna:</p>
+<p>Les operacions trobades de <tt class="docutils literal"><span class="pre">sourceCRS</span></tt> a <tt class="docutils literal"><span class="pre">targetCRS</span></tt>.</p>
+<p>Llença:</p>
+<p><tt class="docutils literal"><span class="pre">NoSuchAuthorityCodeException</span></tt> - si algun dels identificadors especificats no s&#8217;ha pogut trobar.</p>
+<p><tt class="docutils literal"><span class="pre">FactoryException</span></tt> - si la creació de l&#8217;objecte ha fallat per qualsevol altra raó.</p>
+</div>
+<div class="section" id="createcoordinateoperation">
+<h3>createCoordinateOperation<a class="headerlink" href="#createcoordinateoperation" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><pre>public CoordinateOperation createCoordinateOperation(String code)
+            throws NoSuchAuthorityCodeException, FactoryException</pre>
+</div>
+<p>Crea una operació a partir del seu identificador.</p>
+<p>Aquest mètode cerca al fitxer de propietats <a class="reference internal" href="#filename">FILENAME</a>.</p>
+<p>Si no es troba la operació, s&#8217;utilitzarà una factoria alternativa mitjançant
+<a class="reference internal" href="#getfallbackauthorityfactory">getFallbackAuthorityFactory</a>.</p>
+<p>Especificat a:</p>
+<p><tt class="docutils literal"><span class="pre">createCoordinateOperation</span></tt> a la interfície <tt class="docutils literal"><span class="pre">CoordinateOperationAuthorityFactory</span></tt></p>
+<p>Sobreescriu:</p>
+<p><tt class="docutils literal"><span class="pre">createCoordinateOperation</span></tt> a la classe <tt class="docutils literal"><span class="pre">BufferedAuthorityFactory</span></tt></p>
+<p>Paràmetres:</p>
+<p><tt class="docutils literal"><span class="pre">code</span></tt> - Identificador de la operació.</p>
+<p>Retorna:</p>
+<p>La operació des de <tt class="docutils literal"><span class="pre">sourceCRS</span></tt> a <tt class="docutils literal"><span class="pre">targetCRS</span></tt> (un únic element).</p>
+<p>Llença:</p>
+<p><tt class="docutils literal"><span class="pre">NoSuchAuthorityCodeException</span></tt> - si algun dels identificadors especificats no s&#8217;ha pogut trobar.</p>
+<p><tt class="docutils literal"><span class="pre">FactoryException</span></tt> - si la creació de l&#8217;objecte ha fallat per qualsevol altra raó.</p>
+</div>
+<div class="section" id="getfallbackauthorityfactory">
+<h3>getFallbackAuthorityFactory<a class="headerlink" href="#getfallbackauthorityfactory" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">protected</span> <span class="n">CoordinateOperationAuthorityFactory</span> <span class="nf">getFallbackAuthorityFactory</span><span class="o">()</span>
+            <span class="kd">throws</span> <span class="n">NoSuchAuthorityCodeException</span><span class="o">,</span> <span class="n">FactoryException</span>
+</pre></div>
+</div>
+<p>Obté la següent <tt class="docutils literal"><span class="pre">CoordinateOperationAuthorityFactory</span></tt> amb més prioritat després d&#8217;aquesta.</p>
+<p>Retorna:</p>
+<p>La <tt class="docutils literal"><span class="pre">CoordinateOperationAuthorityFactory</span></tt> alternativa.</p>
+<p>Llença:</p>
+<p><tt class="docutils literal"><span class="pre">NoSuchAuthorityCodeException</span></tt> - si algun dels identificadors especificats no s&#8217;ha pogut trobar.</p>
+<p><tt class="docutils literal"><span class="pre">FactoryException</span></tt> - si la creació de l&#8217;objecte ha fallat per qualsevol altra raó.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Taula de Contingut</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">CoordinateOperationFactoryUsingWKT</a><ul>
+<li><a class="reference internal" href="#atributs">Atributs</a><ul>
+<li><a class="reference internal" href="#authority">authority</a></li>
+<li><a class="reference internal" href="#filename">FILENAME</a></li>
+<li><a class="reference internal" href="#priority">PRIORITY</a></li>
+<li><a class="reference internal" href="#factories">factories</a></li>
+<li><a class="reference internal" href="#directory">directory</a></li>
+<li><a class="reference internal" href="#fallbackauthorityfactory">fallbackAuthorityFactory</a></li>
+<li><a class="reference internal" href="#fallbackauthorityfactorysearched">fallbackAuthorityFactorySearched</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#constructors">Constructors</a><ul>
+<li><a class="reference internal" href="#id1">CoordinateOperationFactoryUsingWKT</a></li>
+<li><a class="reference internal" href="#id2">CoordinateOperationFactoryUsingWKT</a></li>
+<li><a class="reference internal" href="#id3">CoordinateOperationFactoryUsingWKT</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#metodes">Mètodes</a><ul>
+<li><a class="reference internal" href="#getauthority">getAuthority</a></li>
+<li><a class="reference internal" href="#createbackingstore">createBackingStore</a></li>
+<li><a class="reference internal" href="#getdefinitionsurl">getDefinitionsURL</a></li>
+<li><a class="reference internal" href="#createfromcoordinatereferencesystemcodes">createFromCoordinateReferenceSystemCodes</a></li>
+<li><a class="reference internal" href="#createcoordinateoperation">createCoordinateOperation</a></li>
+<li><a class="reference internal" href="#getfallbackauthorityfactory">getFallbackAuthorityFactory</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Tema anterior</h4>
+  <p class="topless"><a href="PropertyCoordinateOperationAuthorityFactory.html"
+                        title="capítol anterior">PropertyCoordinateOperationAuthorityFactory</a></p>
+  <h4>Tema següent</h4>
+  <p class="topless"><a href="../geoserver.html"
+                        title="capítol següent">Desenvolupament a GeoServer</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Cerca ràpida</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Ves a" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Entra paraules de cerca o el nom d'un mòdul, classe o funció.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navegació</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../geoserver.html" title="Desenvolupament a GeoServer"
+             >següent</a></li>
+        <li class="right" >
+          <a href="PropertyCoordinateOperationAuthorityFactory.html" title="PropertyCoordinateOperationAuthorityFactory"
+             >anterior</a> |</li>
+        <li><a href="../index.html">Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</a> &raquo;</li>
+          <li><a href="../geotools.html" >Desenvolupament a GeoTools</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Oscar Fonts.
+      Creat amb <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

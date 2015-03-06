@@ -1,0 +1,295 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PropertyCoordinateOperationAuthorityFactory &mdash; Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="top" title="Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation" href="../index.html" />
+    <link rel="up" title="Desenvolupament a GeoTools" href="../geotools.html" />
+    <link rel="next" title="CoordinateOperationFactoryUsingWKT" href="CoordinateOperationFactoryUsingWKT.html" />
+    <link rel="prev" title="ClasspathGridShiftLocator" href="ClasspathGridShiftLocator.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navegació</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="CoordinateOperationFactoryUsingWKT.html" title="CoordinateOperationFactoryUsingWKT"
+             accesskey="N">següent</a></li>
+        <li class="right" >
+          <a href="ClasspathGridShiftLocator.html" title="ClasspathGridShiftLocator"
+             accesskey="P">anterior</a> |</li>
+        <li><a href="../index.html">Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</a> &raquo;</li>
+          <li><a href="../geotools.html" accesskey="U">Desenvolupament a GeoTools</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="propertycoordinateoperationauthorityfactory">
+<h1>PropertyCoordinateOperationAuthorityFactory<a class="headerlink" href="#propertycoordinateoperationauthorityfactory" title="Link permanent a aquest títol">¶</a></h1>
+<div class="highlight-java"><div class="highlight"><pre><span class="kn">package</span> <span class="n">org</span><span class="o">.</span><span class="na">geotools</span><span class="o">.</span><span class="na">referencing</span><span class="o">.</span><span class="na">factory</span>
+</pre></div>
+</div>
+<p>Herència:</p>
+<div class="highlight-python"><pre>Object
+  AbstractFactory
+      ReferencingFactory
+          AbstractAuthorityFactory
+              DirectAuthorityFactory
+                  PropertyCoordinateOperationAuthorityFactory</pre>
+</div>
+<p>Signatura:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PropertyCoordinateOperationAuthorityFactory</span>
+    <span class="kd">extends</span> <span class="n">DirectAuthorityFactory</span>
+    <span class="kd">implements</span> <span class="n">CoordinateOperationAuthorityFactory</span>
+</pre></div>
+</div>
+<p>Descripció:</p>
+<p>Una <tt class="docutils literal"><span class="pre">CoordinateOperationAuthorityFactory</span></tt> recolzada en un fitxer de <em>properties</em>.
+Permet definir transformacions de coordenades personalitzades, a partir de
+dos CRSs i una transformació matemàtica expressada en WKT.</p>
+<p>Les entrades al fitxer de propietats prenen aquest format:</p>
+<div class="highlight-python"><pre>[source crs code],[target crs code]=[WKT math transform]</pre>
+</div>
+<p>Exemples:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="mi">4230</span><span class="p">,</span><span class="mi">4258</span><span class="o">=</span><span class="n">PARAM_MT</span><span class="p">[</span><span class="s">&quot;NTv2&quot;</span><span class="p">,</span> \
+    <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;Latitude and longitude difference file&quot;</span><span class="p">,</span> <span class="s">&quot;100800401.gsb&quot;</span><span class="p">]]</span>
+<span class="mi">23031</span><span class="p">,</span><span class="mi">25831</span><span class="o">=</span><span class="n">PARAM_MT</span><span class="p">[</span><span class="s">&quot;Similarity transformation&quot;</span><span class="p">,</span> \
+    <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;Ordinate 1 of evaluation point in target CRS&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">129.549</span><span class="p">],</span> \
+    <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;Ordinate 2 of evaluation point in target CRS&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">208.185</span><span class="p">],</span> \
+    <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;Scale difference&quot;</span><span class="p">,</span> <span class="mf">1.0000015504</span><span class="p">],</span> \
+    <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;Rotation angle of source coordinate reference system axes&quot;</span><span class="p">,</span> <span class="mf">1.56504</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Per a definicions més compactes, els noms dels paràmetres poden ser substituïts
+pel seu identificador EPSG corresponent. Els exemples següents expressen les
+mateixes transformacions que els anteriors:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="mi">4230</span><span class="p">,</span><span class="mi">4258</span><span class="o">=</span><span class="n">PARAM_MT</span><span class="p">[</span><span class="s">&quot;9615&quot;</span><span class="p">,</span> <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;8656&quot;</span><span class="p">,</span> <span class="s">&quot;100800401.gsb&quot;</span><span class="p">]]</span>
+<span class="mi">23031</span><span class="p">,</span><span class="mi">25831</span><span class="o">=</span><span class="n">PARAM_MT</span><span class="p">[</span><span class="s">&quot;9621&quot;</span><span class="p">,</span> \
+    <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;8621&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">129.549</span><span class="p">],</span> \
+    <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;8622&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">208.185</span><span class="p">],</span> \
+    <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;8611&quot;</span><span class="p">,</span> <span class="mf">1.0000015504</span><span class="p">],</span> \
+    <span class="n">PARAMETER</span><span class="p">[</span><span class="s">&quot;8614&quot;</span><span class="p">,</span> <span class="mf">1.56504</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Referències:</p>
+<p>Vegeu <a class="reference external" href="http://www.geoapi.org/3.0/javadoc/org/opengis/referencing/doc-files/WKT.html">Well-Known Text format</a>
+per a la sintaxi de les transformacions de coordenades. Visiteu el registre <a class="reference external" href="http://www.epsg-registry.org/">EPSG Geodetic Parameter
+Registry</a> per als noms, codis i valors permesos dels paràmetres.</p>
+<p>Tingueu en compte que les transformacions invertibles s&#8217;utilitzaran en ambdues direccions.</p>
+<p>Aquesta factoria no manté cap resultat en memòria. Qualsevol crida a un mètode <tt class="docutils literal"><span class="pre">createFoo</span></tt>
+donarà lloc a un nou processament de la definició en WKT. Per mantenir una caché, utilitzeu
+aquesta factoria des d&#8217;alguna altra que proporcioni aquesta funcionalitat. Per exemple,
+<tt class="docutils literal"><span class="pre">BufferedAuthorityFactory</span></tt>.</p>
+<dl class="docutils">
+<dt>Autor:</dt>
+<dd>Oscar Fonts</dd>
+</dl>
+<div class="section" id="constructor">
+<h2>Constructor<a class="headerlink" href="#constructor" title="Link permanent a aquest títol">¶</a></h2>
+<div class="section" id="id1">
+<h3>PropertyCoordinateOperationAuthorityFactory<a class="headerlink" href="#id1" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><pre>public PropertyCoordinateOperationAuthorityFactory(
+            ReferencingFactoryContainer factories,
+            Citation authority,
+            URL definitions) throws IOException</pre>
+</div>
+<p>Crea una factoria per a l&#8217;autoritat donada a partir del fitxer donat.</p>
+<p>Paràmetres:</p>
+<p><tt class="docutils literal"><span class="pre">factories</span></tt> - Les factories subjacents utilitzades per a la creació d&#8217;objectes.</p>
+<p><tt class="docutils literal"><span class="pre">authority</span></tt> - La organització o agent responsable de la definició i manteniment de la base de dades.</p>
+<p><tt class="docutils literal"><span class="pre">definitions</span></tt> - URL al fitxer de definicions.</p>
+<p>Llença:</p>
+<p><tt class="docutils literal"><span class="pre">IOException</span></tt> - si les definicions no poden ser llegides.</p>
+</div>
+</div>
+<div class="section" id="metodes">
+<h2>Mètodes<a class="headerlink" href="#metodes" title="Link permanent a aquest títol">¶</a></h2>
+<div class="section" id="createcoordinateoperation">
+<h3>createCoordinateOperation<a class="headerlink" href="#createcoordinateoperation" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><pre>public CoordinateOperation createCoordinateOperation(String code)
+            throws NoSuchAuthorityCodeException, FactoryException</pre>
+</div>
+<p>Crea una operació a partir del seu identificador.</p>
+<p>Especificat a:</p>
+<p><tt class="docutils literal"><span class="pre">createCoordinateOperation</span></tt> a la interfície <tt class="docutils literal"><span class="pre">CoordinateOperationAuthorityFactory</span></tt></p>
+<p>Sobreescriu:</p>
+<p><tt class="docutils literal"><span class="pre">createCoordinateOperation</span></tt> a la classe <tt class="docutils literal"><span class="pre">AbstractAuthorityFactory</span></tt></p>
+<p>Paràmetres:</p>
+<p><tt class="docutils literal"><span class="pre">code</span></tt> - El codi per a la operació.</p>
+<p>Retorna:</p>
+<p>La operació per al codi donat.</p>
+<p>Llença:</p>
+<p><tt class="docutils literal"><span class="pre">NoSuchAuthorityCodeException</span></tt> - si no es troba una definicio per al codi especificat.</p>
+<p><tt class="docutils literal"><span class="pre">FactoryException</span></tt> - si la creació de l&#8217;objecte ha fallat per qualsevol altra raó.</p>
+</div>
+<div class="section" id="createfromcoordinatereferencesystemcodes">
+<h3>createFromCoordinateReferenceSystemCodes<a class="headerlink" href="#createfromcoordinatereferencesystemcodes" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><pre>public Set&lt;CoordinateOperation&gt; createFromCoordinateReferenceSystemCodes(
+            String sourceCRS, String targetCRS)
+                    throws NoSuchAuthorityCodeException, FactoryException</pre>
+</div>
+<p>Crea una <tt class="docutils literal"><span class="pre">CoordinateOperation</span></tt> a partir d&#8217;un parell de codis CRS.
+Aquest mètode retorna un a sola operació a partir del fitxer de <em>properties</em>.
+Si la operació és invertible, també s&#8217;utilitzarà per resoldre la operació inversa.
+Si no es troba cap operació, retornarà un conjunt buit.</p>
+<p>Especificat a:</p>
+<p><tt class="docutils literal"><span class="pre">createFromCoordinateReferenceSystemCodes</span></tt>
+a la interfície
+<tt class="docutils literal"><span class="pre">CoordinateOperationAuthorityFactory</span></tt></p>
+<p>Sobreescriu:</p>
+<p><tt class="docutils literal"><span class="pre">createFromCoordinateReferenceSystemCodes</span></tt> a la classe <tt class="docutils literal"><span class="pre">AbstractAuthorityFactory</span></tt></p>
+<p>Paràmetres:</p>
+<p><tt class="docutils literal"><span class="pre">sourceCRS</span></tt> - Identificador del sistema de referència de coordenades d&#8217;origen.</p>
+<p><tt class="docutils literal"><span class="pre">targetCRS</span></tt> - Identificador del sistema de referència de coordenades destí.</p>
+<p>Retorna:</p>
+<p>La operació des de <tt class="docutils literal"><span class="pre">sourceCRS</span></tt> a <tt class="docutils literal"><span class="pre">targetCRS</span></tt> (un únic element).</p>
+<p>Llença:</p>
+<p><tt class="docutils literal"><span class="pre">NoSuchAuthorityCodeException</span></tt> - si algun dels identificadors especificats no s&#8217;ha pogut trobar.</p>
+<p><tt class="docutils literal"><span class="pre">FactoryException</span></tt> - si la creació de l&#8217;objecte ha fallat per qualsevol altra raó.</p>
+</div>
+<div class="section" id="getauthoritycodes">
+<h3>getAuthorityCodes<a class="headerlink" href="#getauthoritycodes" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><pre>public Set&lt;String&gt; getAuthorityCodes(Class&lt;? extends IdentifiedObject&gt; type)</pre>
+</div>
+<p>Retorna el conjunbt d&#8217;identificadors del tipus especificat. Només s&#8217;acceptarà
+com a tipus <tt class="docutils literal"><span class="pre">CoordinateOperation.class</span></tt>. Aquesta factoria no filtrarà codis
+per a les seves subclasses.</p>
+<p>Especificat a:</p>
+<p><tt class="docutils literal"><span class="pre">getAuthorityCodes</span></tt> a la interfície <tt class="docutils literal"><span class="pre">AuthorityFactory</span></tt></p>
+<p>Paràmetres:</p>
+<p><tt class="docutils literal"><span class="pre">type</span></tt> - El tipus de <tt class="docutils literal"><span class="pre">CoordinateOperation</span></tt> (o <tt class="docutils literal"><span class="pre">null</span></tt>, que tindrà el mateix efecte).</p>
+<p>Retorna:</p>
+<p>Tots els codis disponibles, o el conjunt buit.</p>
+</div>
+<div class="section" id="getdescriptiontext">
+<h3>getDescriptionText<a class="headerlink" href="#getdescriptiontext" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><pre>public InternationalString getDescriptionText(String code)
+                                       throws NoSuchAuthorityCodeException,
+                                              FactoryException</pre>
+</div>
+<p>Obté un text descriptiu d&#8217;un objecte corresponent al codi indicat.</p>
+<p>Especificat a:</p>
+<p><tt class="docutils literal"><span class="pre">getDescriptionText</span></tt> a la interfície <tt class="docutils literal"><span class="pre">AuthorityFactory</span></tt></p>
+<p>Paràmetres:</p>
+<p><tt class="docutils literal"><span class="pre">code</span></tt> - Codi proveït per l&#8217;autoritat.</p>
+<p>Retorna:</p>
+<p>Una descripció de l&#8217;objecte, o <tt class="docutils literal"><span class="pre">null</span></tt> si l&#8217;objecte corresponent a un determinat
+codi no té descripció.</p>
+<p>Llença:</p>
+<p><tt class="docutils literal"><span class="pre">NoSuchAuthorityCodeException</span></tt> - si el codi especificat no s&#8217;ha trobat.</p>
+<p><tt class="docutils literal"><span class="pre">FactoryException</span></tt> - si la cerca ha fallat per qualsevol altra raó.</p>
+</div>
+<div class="section" id="getauthority">
+<h3>getAuthority<a class="headerlink" href="#getauthority" title="Link permanent a aquest títol">¶</a></h3>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="n">Citation</span> <span class="nf">getAuthority</span><span class="o">()</span>
+</pre></div>
+</div>
+<p>Retorna:</p>
+<p>La organització o agent responsable de la definició i manteniment de la base de dades.</p>
+<p>Especificat a:</p>
+<p><tt class="docutils literal"><span class="pre">getAuthority</span></tt> a la interfície <tt class="docutils literal"><span class="pre">AuthorityFactory</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">getAuthority</span></tt> a la classe <tt class="docutils literal"><span class="pre">AbstractAuthorityFactory</span></tt></p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Taula de Contingut</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">PropertyCoordinateOperationAuthorityFactory</a><ul>
+<li><a class="reference internal" href="#constructor">Constructor</a><ul>
+<li><a class="reference internal" href="#id1">PropertyCoordinateOperationAuthorityFactory</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#metodes">Mètodes</a><ul>
+<li><a class="reference internal" href="#createcoordinateoperation">createCoordinateOperation</a></li>
+<li><a class="reference internal" href="#createfromcoordinatereferencesystemcodes">createFromCoordinateReferenceSystemCodes</a></li>
+<li><a class="reference internal" href="#getauthoritycodes">getAuthorityCodes</a></li>
+<li><a class="reference internal" href="#getdescriptiontext">getDescriptionText</a></li>
+<li><a class="reference internal" href="#getauthority">getAuthority</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Tema anterior</h4>
+  <p class="topless"><a href="ClasspathGridShiftLocator.html"
+                        title="capítol anterior">ClasspathGridShiftLocator</a></p>
+  <h4>Tema següent</h4>
+  <p class="topless"><a href="CoordinateOperationFactoryUsingWKT.html"
+                        title="capítol següent">CoordinateOperationFactoryUsingWKT</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Cerca ràpida</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Ves a" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Entra paraules de cerca o el nom d'un mòdul, classe o funció.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navegació</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="CoordinateOperationFactoryUsingWKT.html" title="CoordinateOperationFactoryUsingWKT"
+             >següent</a></li>
+        <li class="right" >
+          <a href="ClasspathGridShiftLocator.html" title="ClasspathGridShiftLocator"
+             >anterior</a> |</li>
+        <li><a href="../index.html">Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</a> &raquo;</li>
+          <li><a href="../geotools.html" >Desenvolupament a GeoTools</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Oscar Fonts.
+      Creat amb <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

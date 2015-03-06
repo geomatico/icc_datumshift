@@ -1,0 +1,123 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Desenvolupament a GeoServer &mdash; Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="top" title="Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation" href="index.html" />
+    <link rel="next" title="Conjunt de proves realitzades" href="tests.html" />
+    <link rel="prev" title="CoordinateOperationFactoryUsingWKT" href="javadoc/CoordinateOperationFactoryUsingWKT.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navegació</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="tests.html" title="Conjunt de proves realitzades"
+             accesskey="N">següent</a></li>
+        <li class="right" >
+          <a href="javadoc/CoordinateOperationFactoryUsingWKT.html" title="CoordinateOperationFactoryUsingWKT"
+             accesskey="P">anterior</a> |</li>
+        <li><a href="index.html">Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="desenvolupament-a-geoserver">
+<h1>Desenvolupament a GeoServer<a class="headerlink" href="#desenvolupament-a-geoserver" title="Link permanent a aquest títol">¶</a></h1>
+<p>El gruix del desenvolupament s&#8217;ha realitzat sobre GeoTools, tenint present la seva adaptabilitat a diversos entorns d&#8217;execució. A GeoServer tan sols ha calgut incorporat un parell de classes que, amb un codi mínim, adapten la funcionalitat provista per GeoTools a un nou entorn d&#8217;execució particular.</p>
+<p>Quant a la <strong>transformació de semblança</strong>, no ha calgut realitzar cap modificació a GeoServer. El mòdul de referenciació de GeoTools ja s&#8217;encarrega de sel·leccionar aquesta transformació quan cal, i els paràmetres EPSG:5166 ja es troben disponibles a la BDD EPSG provista amb el propi GeoTools.</p>
+<p>GeoServer té un directori on s&#8217;emmagatzemen totes les dades i configuració del catàleg de serveis publicats, anomenat <tt class="docutils literal"><span class="pre">GEOSERVER_DATA_DIR</span></tt>. Dins d&#8217;aquest directori, n&#8217;hi ha un altre dedicat a definir els CRS personalitzats, anomenat <tt class="file docutils literal"><span class="pre">user_projections</span></tt>. S&#8217;ha cregut oportú utilitzar aquesta mateixa ubicació perquè els usuaris hi puguin desar els fitxers de malla i el fitxer de propietats amb les operacions de coordenades personalitzades.</p>
+<div class="figure align-center">
+<a class="reference external image-reference" href="_images/GEOS-Adaptors.PNG"><img alt="_images/GEOS-Adaptors.PNG" src="_images/GEOS-Adaptors.PNG" /></a>
+<p class="caption">Adaptadors incorporats a GeoServer.</p>
+</div>
+<p>Per a les <strong>transformacions de malla</strong>, s&#8217;ha inclòs una implementaciò de <tt class="docutils literal"><span class="pre">GridShiftLocator</span></tt> anomenada <tt class="docutils literal"><span class="pre">GeoServerGridShiftLocator</span></tt> que es registra com a servei amb una prioritat lleugerament més alta que el seu equivalent a GeoTools, <tt class="docutils literal"><span class="pre">ClasspathGridShiftLocator</span></tt>. Per tant, és el primer que es farà servir a l&#8217;hora de localitzar algun fitxers de malla, sigui NTv2 o NADCON. Aquest localitzador de malles estableix el directori de cerca en <tt class="file docutils literal"><span class="pre">GEOSERVER_DATA_DIR/user_projections</span></tt> al mètode <tt class="docutils literal"><span class="pre">locateGrid()</span></tt>.</p>
+<p>Per últim, les <strong>operacions de coordenades personalitzades</strong> utilitzaran la factoria <tt class="docutils literal"><span class="pre">GeoserverWKTOperationFactory</span></tt>, que extén <tt class="docutils literal"><span class="pre">CoordinateOperationFactoryUsingWKT</span></tt> redefinint el mètode <tt class="docutils literal"><span class="pre">getDefinitionsURL</span></tt> i establint la seva prioritat com a màxima. <tt class="docutils literal"><span class="pre">getDefinitionsURL</span></tt> localitzarà el fitxer de propietats amb les operacions personalitzades a <tt class="file docutils literal"><span class="pre">GEOSERVER_DATA_DIR/user_projections/epsg_operations.properties</span></tt>. Si aquest fitxer no existeix, el mecanisme definit a la superclasse s&#8217;encarregarà de que aquesta factoria no s&#8217;activi.</p>
+<p>Per tant, a GeoServer s&#8217;ha incorporat un codi mínim, però ha calgut redactar una pàgina al manual oficial d&#8217;usuaris explicant com fer servir aquestes noves funcionalitats.</p>
+<p>Un cop més, Andrea Aime ha fet una aportació destacable, fent possible consultar els detalls sobre la transformació que s&#8217;està aplicant en cada moment, i realitzar transformacions senzilles de de prova per verificar la bondat d&#8217;una operació determinada. A aquesta eina, anomenada <cite>reprojection console</cite>, s&#8217;hi pot accedir des de la mateixa interfície web de GeoServer, a l&#8217;apartat <cite>demos</cite>:</p>
+<div class="figure align-center">
+<img alt="_images/reprojection_console.png" src="_images/reprojection_console.png" />
+<p class="caption"><cite>Reprojection console</cite> accedint a la transformació oficial de l&#8217;ICC.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Tema anterior</h4>
+  <p class="topless"><a href="javadoc/CoordinateOperationFactoryUsingWKT.html"
+                        title="capítol anterior">CoordinateOperationFactoryUsingWKT</a></p>
+  <h4>Tema següent</h4>
+  <p class="topless"><a href="tests.html"
+                        title="capítol següent">Conjunt de proves realitzades</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Cerca ràpida</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Ves a" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Entra paraules de cerca o el nom d'un mòdul, classe o funció.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navegació</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="tests.html" title="Conjunt de proves realitzades"
+             >següent</a></li>
+        <li class="right" >
+          <a href="javadoc/CoordinateOperationFactoryUsingWKT.html" title="CoordinateOperationFactoryUsingWKT"
+             >anterior</a> |</li>
+        <li><a href="index.html">Incorporació de transformacions de malla NTv2 a Geotools i a Geoserver 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Oscar Fonts.
+      Creat amb <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
